@@ -1,26 +1,53 @@
-import React, { FC } from "react";
+/* eslint-disable react/display-name */
+import React, { ChangeEvent, FC, memo } from "react";
+import styles from "./input.module.css";
 
 type Props = {
   type?: "text" | "submit" | "password";
   placeholder?: string;
   size?: "xs" | "sm" | "md" | "lg";
-  className?:string
+  className?: string;
+  value?:string
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-const Input: FC<Props> = ({ type = "text", placeholder, size = "md",className }) => {
+const Input: FC<Props> = memo(({
+  type = "text",
+  placeholder,
+  size = "md",
+  className,
+  value,
+  onChange,
+}) => {
   let inputSize = {};
   switch (size) {
     case "xs":
-      inputSize = { padding: "2px 4px", fontSize:"0.75rem" };
+      inputSize = {
+        paddingInlineStart: "0.5rem",
+        height: "1.5rem",
+        fontSize: "0.75rem",
+      };
       break;
     case "sm":
-      inputSize = { padding: "4px 8px",fontSize:"0.9rem" };
+      inputSize = {
+        paddingInlineStart: "0.75rem",
+        height: "2rem",
+        fontSize: "0.9rem",
+      };
       break;
     case "md":
-      inputSize = { padding: "5px 10px",fontSize:"1rem" };
+      inputSize = {
+        paddingInlineStart: "1rem",
+        height: "2.5rem",
+        fontSize: "1rem",
+      };
       break;
     case "lg":
-      inputSize = { padding: "10px 12px" ,fontSize:"1.1rem"};
+      inputSize = {
+        paddingInlineStart: "1rem",
+        height: "3rem",
+        fontSize: "1.1rem",
+      };
       break;
   }
 
@@ -29,9 +56,11 @@ const Input: FC<Props> = ({ type = "text", placeholder, size = "md",className })
       type={type}
       placeholder={placeholder}
       style={{ ...inputSize, border: "1px solid #ddd", borderRadius: "5px" }}
-      className={className}
+      className={`${styles.input} ${className}`}
+      value={value}
+      onChange={onChange}
     />
   );
-};
+});
 
 export default Input;
