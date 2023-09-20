@@ -23,11 +23,10 @@ input {
   border-radius: 0.3rem;
 }
 
-/* button[type='button'], [type='reset'], [type='submit'] {
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  transition: 0.1s;
-} */
+.dashboardContainer {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
 
 button:hover {
   opacity: 0.8;
