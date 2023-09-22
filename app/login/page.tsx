@@ -16,7 +16,8 @@ const Login = async () => {
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <div className="w-full max-w-lg h-full max-h-96 flex items-center justify-center bg-white shadow-md rounded-md">
+      <div className="p-6 flex flex-col w-full max-w-xs flex items-center justify-center bg-white shadow-md rounded-md">
+        <div className="mt-3 text-2xl">Login</div>
         <LoginForm />
       </div>
     </div>

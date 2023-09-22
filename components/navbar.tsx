@@ -1,16 +1,26 @@
+"use client";
 import React from "react";
-import LogoutButton from "./logout-button";
 import { BiMenuAltLeft } from "react-icons/bi";
+import DropDown from "./ui/DropDown";
+import { useStore } from "@/store";
 
 const Navbar = () => {
+  const isSidebar = useStore((state) => state.isSidebar);
+  const toggleIsSidebar = useStore((state) => state.toggleSidebar);
+
   return (
-    <div className="flex items-center w-full h-12 bg-blue-500">
-      <nav>
-        <BiMenuAltLeft style={{ fontSize: "36px" }} className="cursor-pointer text-white"/>
-      </nav>
-      <div>
-        <LogoutButton />
+    <div className="flex items-center justify-between w-full h-10 bg-blue-600 sticky top-0">
+      <div className="p-2">
+        <BiMenuAltLeft
+          style={{ fontSize: "24px" }}
+          className="cursor-pointer text-white"
+          onClick={() => toggleIsSidebar(isSidebar)}
+        />
       </div>
+      {isSidebar}
+      <nav className="flex">
+        <DropDown />
+      </nav>
     </div>
   );
 };

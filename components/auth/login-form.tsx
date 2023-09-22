@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Button from "../ui/Button";
+import Input from "../ui/input";
 
 type Inputs = {
   email: string;
@@ -11,7 +12,7 @@ type Inputs = {
 };
 
 const LoginForm = () => {
-    const router = useRouter();
+  const router = useRouter();
   const supabase = createClientComponentClient();
   const {
     register,
@@ -28,25 +29,42 @@ const LoginForm = () => {
       email: data.email,
       password: data.password,
     });
-    if(user) {
-        router.push("/")
+    if (error) {
+      alert("ログインに失敗しました");
+      return;
     }
-
-    console.log(user);
-    console.log(error);
+    if (user) {
+      router.push("/");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mt-3">
-        <div>email</div>
-        <input className="" type="text" {...register("email")} />
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <div className="mt-3 w-full">
+        <Input
+          label="email"
+          placeholder="emailを入力してください"
+          type="text"
+          className="w-full"
+          register={{ ...register("email", { required: true }) }}
+        />
+        {errors.email && (
+          <div className="text-red-500">emailを入力してください</div>
+        )}
       </div>
       <div className="mt-3">
-        <div>password</div>
-        <input className="" type="password" {...register("password")} />
+        <Input
+          label="password"
+          placeholder="passwordを入力してください"
+          type="password"
+          className="w-full"
+          register={{ ...register("password", { required: true }) }}
+        />
+        {errors.password && (
+          <div className="text-red-500">passwordを入力してください</div>
+        )}
       </div>
-      <Button type="submit" className="mt-6">
+      <Button type="submit" className="mt-6 w-full">
         送信
       </Button>
     </form>
