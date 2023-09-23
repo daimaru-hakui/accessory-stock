@@ -9,12 +9,14 @@ const AllProducts = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
 
   const fetchProducts = async () => {
-    const { data } = await supabase.from("products").select(`*,
+    const { data } = await supabase
+      .from("products")
+      .select(`*,
     skus(id,stock),
     suppliers(id,supplier_name),
     categories(id,category_name)
-   `).is('deleted_at', null);
-    console.log("data", data);
+   `)
+      .is('deleted_at', null);
     return data;
   };
 

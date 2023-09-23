@@ -200,8 +200,8 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
           </div>
         </div>
         <div>
-          <Button type="submit" className="w-full">
-            登録
+          <Button type="submit" colorScheme="blue" className="w-full">
+            {pageType === "NEW" ? "登録" : "更新"}
           </Button>
         </div>
       </div>

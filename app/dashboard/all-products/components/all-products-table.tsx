@@ -1,6 +1,12 @@
-import React, { FC } from "react";
+'use client';
+import React, { FC, useState, useEffect } from "react";
 import AllProductsTableRow from "./all-products-table-row";
 import { Database } from "@/schema";
+import Button from "@/components/ui/Button";
+import IncomingModal from "./incoming-modal";
+import OutgoingModal from "./outgoing-modal";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -14,28 +20,102 @@ interface Props {
 }
 
 const AllProductsTable: FC<Props> = ({ products }) => {
+  const [check, setCheck] = useState<"ADD" | "REMOVE" | "NONE">("NONE");
+  const [checkList, setCheckList] = useState<string[]>([]);
+  const [checkedProducts, setCheckedProducts] = useState<(ProductRow | undefined)[]>([]);
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+
+  const handleCheckList = () => {
+    if (checkList.length === 0) {
+      setCheck("ADD");
+    } else {
+      setCheckList([]);
+      setCheck("REMOVE");
+    }
+  };
+
+  useEffect(() => {
+    if (!products) return;
+    const newProducts: (ProductRow | undefined)[] = checkList
+      .map((checkId) => products
+        .find((product) => product.id === checkId));
+    setCheckedProducts(newProducts);
+  }, [products, checkList]);
+
+  const removeProducts = async (products: (ProductRow | undefined)[]) => {
+    if (products.length === 0) return;
+    const result = confirm(`削除して宜しいでしょうか"`);
+    if (!result) return;
+    products.forEach(async (product) => {
+      const { error } = await supabase
+        .from("products")
+        .update({
+          deleted_at: new Date()
+        })
+        .eq("id", product?.id);
+      if (error) {
+        console.log(error);
+        return;
+      }
+    });
+    setCheckList([]);
+    setCheck("REMOVE");
+    router.refresh();
+  };
+
+  const ThStyle = "p-1";
+
   return (
-    <table className="w-full">
-      <thead className="text-left text-xs">
-        <tr className="border-b h-12">
-          <th>order</th>
-          <th>既成/別注</th>
-          <th>品番/品名</th>
-          <th>カラー</th>
-          <th>サイズ</th>
-          <th>カテゴリー</th>
-          <th>仕入先</th>
-          <th className="text-center">価格</th>
-          <th className="text-right">徳島在庫</th>
-          <th className="text-center">アクション</th>
-        </tr>
-      </thead>
-      <tbody className="text-sm">
-        {products?.map((product) => (
-          <AllProductsTableRow key={product.id} product={product} />
-        ))}
-      </tbody>
-    </table>
+    <div className="w-full">
+      <div>
+        <div className="h-8">
+          {checkList.length > 0 &&
+            <div className="flex justify-between gap-3">
+              <div className="flex gap-3">
+                <IncomingModal checkedProducts={checkedProducts} />
+                <OutgoingModal checkedProducts={checkedProducts} />
+              </div>
+              <Button colorScheme="red" onClick={() => removeProducts(checkedProducts)}>削除</Button>
+            </div>
+          }
+        </div>
+      </div>
+      <table className="w-full mt-3">
+        <thead className="text-left text-xs">
+          <tr className="border-b h-12">
+            <th className={`${ThStyle}`}>
+              <div className="w-6 flex items-center justify-center">
+                <input type="checkbox" checked={checkList.length > 0 ? true : false}
+                  onChange={handleCheckList}
+                  className="cursor-pointer"
+                />
+              </div>
+            </th>
+            <th className={`${ThStyle}`}>order</th>
+            <th className={`${ThStyle}`}>既成/別注</th>
+            <th className={`${ThStyle}`}>品番/品名</th>
+            <th className={`${ThStyle}`}>カラー</th>
+            <th className={`${ThStyle}`}>サイズ</th>
+            <th className={`${ThStyle}`}>カテゴリー</th>
+            <th className={`${ThStyle}`}>仕入先</th>
+            <th className={`${ThStyle} "text-center"`}>価格</th>
+            <th className={`${ThStyle} "text-right"`}>徳島在庫</th>
+            <th className={`${ThStyle} "text-center"`}>アクション</th>
+          </tr>
+        </thead>
+        <tbody className="text-sm">
+          {products?.map((product) => (
+            <AllProductsTableRow key={product.id}
+              product={product}
+              setCheckList={setCheckList}
+              check={check}
+              setCheck={setCheck}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

@@ -11,9 +11,11 @@ type Store = {
   isSidebar: boolean;
   toggleSidebar: (isSidebar: boolean) => void;
   suppliers: Supplier[];
-  setSuppliers:(suppliers:Supplier[])=>void
+  setSuppliers: (suppliers: Supplier[]) => void;
   categories: Categorie[];
-  setCategories:(categories:Categorie[])=>void
+  setCategories: (categories: Categorie[]) => void;
+  checkList: string[];
+  setCheckList: (checkList: string[]) => void;
 };
 
 export const useStore = create<Store>((set) => ({
@@ -23,6 +25,8 @@ export const useStore = create<Store>((set) => ({
   toggleSidebar: (isSidebar) => set(() => ({ isSidebar: !isSidebar })),
   suppliers: [],
   setSuppliers: (suppliers) => set({ suppliers }),
-  categories:[],
+  categories: [],
   setCategories: (categories) => set({ categories }),
+  checkList: [],
+  setCheckList: (checkList) => set({ checkList })
 }));
