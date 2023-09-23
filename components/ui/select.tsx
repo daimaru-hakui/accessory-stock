@@ -5,14 +5,15 @@ type Props = {
   label?: string;
   register: any;
   className?: string;
+  required?: boolean;
 };
 
-const Select: FC<Props> = ({ children, label, register, className }) => {
+const Select: FC<Props> = ({ children, label, register, className, required }) => {
   return (
     <>
       {label && (
         <label style={{ display: "block" }} className="text-xs font-bold">
-          {label}
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <select style={Style} {...register} className={className}>

@@ -4,14 +4,13 @@ import { Database } from "@/schema";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
-interface Products extends Product {
-  colors:  { id: string; color_name: string } | null;
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+interface ProductRow extends Product {
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 interface Props {
-  products: Products[] | null
+  products: ProductRow[] | null;
 }
 
 const AllProductsTable: FC<Props> = ({ products }) => {
@@ -20,10 +19,11 @@ const AllProductsTable: FC<Props> = ({ products }) => {
       <thead className="text-left text-xs">
         <tr className="border-b h-12">
           <th>order</th>
+          <th>既成/別注</th>
           <th>品番/品名</th>
-          <th>カテゴリー</th>
           <th>カラー</th>
           <th>サイズ</th>
+          <th>カテゴリー</th>
           <th>仕入先</th>
           <th className="text-center">価格</th>
           <th className="text-right">徳島在庫</th>

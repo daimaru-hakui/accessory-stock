@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
 import React, { ChangeEvent, FC, memo, useId } from "react";
-import classes from "./input.module.css";
 
 type Props = {
   type?: "text" | "submit" | "password" | "number";
@@ -9,6 +8,7 @@ type Props = {
   size?: "xs" | "sm" | "md" | "lg";
   className?: string;
   value?: string;
+  required?: boolean;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   register?: any;
 };
@@ -21,6 +21,7 @@ const Input: FC<Props> = memo(
     size = "md",
     className,
     value,
+    required,
     onChange,
     register,
   }) => {
@@ -70,8 +71,8 @@ const Input: FC<Props> = memo(
     return (
       <>
         {label && (
-          <label htmlFor={uid} className={`${classes.label} text-xs font-bold mb-1`}>
-            {label}
+          <label htmlFor={uid} className={`text-xs font-bold mb-1 block`}>
+            {label} {required && <span className="text-red-500">*</span>}
           </label>
         )}
         <input
@@ -79,7 +80,7 @@ const Input: FC<Props> = memo(
           type={type}
           placeholder={placeholder}
           style={Style}
-          className={`${classes.input} ${className}`}
+          className={`${className}`}
           value={value}
           onChange={onChange}
           step="any"

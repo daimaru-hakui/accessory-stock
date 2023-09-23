@@ -1,49 +1,51 @@
 "use client";
-import React, { FC, ReactNode, useState } from "react";
+import React, { FC, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Button from "./Button";
 
 interface Props {
   title?: string;
   children: ReactNode;
+  isOpen: boolean;
+  setIsOpen: (bool: boolean) => void;
+  top?: number;
 }
 
-const Modal: FC<Props> = ({ title = "", children }): JSX.Element => {
-  const [isOpen, setIsOpen] = useState(false);
+const Modal: FC<Props> = ({ title = "", children, isOpen, setIsOpen, top = 48 }): JSX.Element => {
   const onClose = () => {
     setIsOpen(false);
   };
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>発注</Button>
       {isOpen
         ? createPortal(
+          <div
+            className="fixed w-full h-screen top-0 left-0"
+            style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+          >
             <div
-              className="fixed w-full h-screen top-0 left-0"
-              style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+              className="w-full h-full flex justify-center items-start overflow-auto"
+              onClick={onClose}
             >
               <div
-                className="w-full h-screen flex justify-center overflow-auto"
-                onClick={onClose}
+                style={{ marginTop: `${top}px` }}
+                className="p-6 rounded-md bg-white"
+                onClick={(e) => e.stopPropagation()}
               >
-                <div
-                  className="p-6 w-full max-w-2xl mt-24 h-72 rounded-md bg-white"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="h-full flex flex-col justify-between">
-                    <div>
-                      <div className="font-bold">{title}</div>
-                      <div className="mt-6">{children}</div>
-                    </div>
-                    <div className="text-right">
-                      <Button onClick={onClose}>閉じる</Button>
-                    </div>
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <div className="font-bold">{title}</div>
+                    <div className="mt-6">{children}</div>
+                  </div>
+                  <div className="mt-6 text-right">
+                    <Button onClick={onClose}>閉じる</Button>
                   </div>
                 </div>
               </div>
-            </div>,
-            document.body
-          )
+            </div>
+          </div >,
+          document.body
+        )
         : null}
     </>
   );
