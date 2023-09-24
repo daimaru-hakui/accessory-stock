@@ -3,19 +3,21 @@ import React, { ReactNode, FC } from "react";
 type Props = {
   children: ReactNode;
   label?: string;
-  register: any;
+  register?: any;
   className?: string;
+  required?: boolean;
+  onChange?: (payload: any) => void;
 };
 
-const Select: FC<Props> = ({ children, label, register, className }) => {
+const Select: FC<Props> = ({ children, label, register, className, required, onChange }) => {
   return (
     <>
       {label && (
         <label style={{ display: "block" }} className="text-xs font-bold">
-          {label}
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
-      <select style={Style} {...register} className={className}>
+      <select style={Style} {...register} className={className} onChange={onChange}>
         {children}
       </select>
     </>

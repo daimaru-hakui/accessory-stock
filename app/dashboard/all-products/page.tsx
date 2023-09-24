@@ -7,18 +7,23 @@ import AllProductsTable from "./components/all-products-table";
 
 const AllProducts = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
-  
+
   const fetchProducts = async () => {
-    const { data } = await supabase.from("products").select(`*,
-    colors(id,color_name),
+    const { data } = await supabase
+      .from("products")
+      .select(`*,
     skus(id,stock),
     suppliers(id,supplier_name),
     categories(id,category_name)
-   `);
+   `)
+      .is('deleted_at', null);
     return data;
   };
 
   const products = await fetchProducts();
+
+  if (!products) return;
+
   return (
     <div className="w-full">
       <h1 className="font-bold text-lg">付属品一覧</h1>

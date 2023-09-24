@@ -6,7 +6,7 @@ const AllProductsSearch = () => {
   return (
     <div className="flex gap-3">
       <Input />
-      <Button>検索</Button>
+      <Button colorScheme="blue">検索</Button>
     </div>
   );
 };
