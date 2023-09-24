@@ -7,11 +7,12 @@ interface Props {
   title?: string;
   children: ReactNode;
   isOpen: boolean;
+  closeButton?: boolean;
   setIsOpen: (bool: boolean) => void;
   top?: number;
 }
 
-const Modal: FC<Props> = ({ title = "", children, isOpen, setIsOpen, top = 48 }): JSX.Element => {
+const Modal: FC<Props> = ({ title = "", children, isOpen, setIsOpen, top = 48, closeButton = true }): JSX.Element => {
   const onClose = () => {
     setIsOpen(false);
   };
@@ -37,9 +38,12 @@ const Modal: FC<Props> = ({ title = "", children, isOpen, setIsOpen, top = 48 })
                     <div className="font-bold">{title}</div>
                     <div className="mt-6">{children}</div>
                   </div>
-                  <div className="mt-6 text-right">
-                    <Button variant="outline" onClick={onClose}>閉じる</Button>
-                  </div>
+
+                  {closeButton && (
+                    <div className="mt-6 text-right">
+                      <Button variant="outline" onClick={onClose}>閉じる</Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

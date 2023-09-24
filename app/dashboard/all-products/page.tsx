@@ -21,6 +21,9 @@ const AllProducts = async () => {
   };
 
   const products = await fetchProducts();
+
+  if (!products) return;
+
   return (
     <div className="w-full">
       <h1 className="font-bold text-lg">付属品一覧</h1>

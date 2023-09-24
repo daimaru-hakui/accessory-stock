@@ -9,7 +9,7 @@ const OrderProduct = () => {
     <>
       <Button onClick={() => setIsOpen(true)}>発注</Button>
       <Modal title="発注" isOpen={isOpen} setIsOpen={setIsOpen}>
-        ｓｓｓｓ
+        作成中
       </Modal>
     </>
   );

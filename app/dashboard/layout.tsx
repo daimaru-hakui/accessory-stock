@@ -12,6 +12,7 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
   const isSidebar = useStore((state) => state.isSidebar);
   const setSuppliers = useStore((state) => state.setSuppliers);
   const setCategories = useStore((state) => state.setCategories);
+  const setStockPlaces = useStore((state) => state.setStockPlaces);
 
   useEffect(() => {
     getSuppliers();
@@ -19,6 +20,10 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
 
   useEffect(() => {
     getCategories();
+  }, []);
+
+  useEffect(() => {
+    getStockPlaces();
   }, []);
 
   const getSuppliers = useCallback(async () => {
@@ -32,6 +37,12 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
     if (!data) return;
     setCategories(data);
   }, [supabase, setCategories]);
+
+  const getStockPlaces = useCallback(async () => {
+    const { data, error } = await supabase.from("stock_places").select("*");
+    if (!data) return;
+    setStockPlaces(data);
+  }, [supabase, setStockPlaces]);
 
   console.log("dashboard");
   return (

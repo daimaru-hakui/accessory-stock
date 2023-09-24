@@ -2,7 +2,7 @@
 import React, { ChangeEvent, FC, memo, useId } from "react";
 
 type Props = {
-  type?: "text" | "submit" | "password" | "number";
+  type?: "text" | "submit" | "password" | "number" | "date";
   label?: string;
   placeholder?: string;
   size?: "xs" | "sm" | "md" | "lg";

@@ -3,12 +3,13 @@ import React, { ReactNode, FC } from "react";
 type Props = {
   children: ReactNode;
   label?: string;
-  register: any;
+  register?: any;
   className?: string;
   required?: boolean;
+  onChange?: (payload: any) => void;
 };
 
-const Select: FC<Props> = ({ children, label, register, className, required }) => {
+const Select: FC<Props> = ({ children, label, register, className, required, onChange }) => {
   return (
     <>
       {label && (
@@ -16,7 +17,7 @@ const Select: FC<Props> = ({ children, label, register, className, required }) =
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
-      <select style={Style} {...register} className={className}>
+      <select style={Style} {...register} className={className} onChange={onChange}>
         {children}
       </select>
     </>

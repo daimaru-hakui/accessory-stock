@@ -3,10 +3,9 @@ import React, { FC, useState, useEffect } from "react";
 import AllProductsTableRow from "./all-products-table-row";
 import { Database } from "@/schema";
 import Button from "@/components/ui/Button";
-import IncomingModal from "./incoming-modal";
-import OutgoingModal from "./outgoing-modal";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import InOutStockModal from "./in-out-stock-table-modal";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -16,13 +15,13 @@ interface ProductRow extends Product {
   categories: { id: string; category_name: string; } | null;
 }
 interface Props {
-  products: ProductRow[] | null;
+  products: ProductRow[];
 }
 
 const AllProductsTable: FC<Props> = ({ products }) => {
   const [check, setCheck] = useState<"ADD" | "REMOVE" | "NONE">("NONE");
   const [checkList, setCheckList] = useState<string[]>([]);
-  const [checkedProducts, setCheckedProducts] = useState<(ProductRow | undefined)[]>([]);
+  const [checkedProducts, setCheckedProducts] = useState<ProductRow[]>();
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -36,14 +35,18 @@ const AllProductsTable: FC<Props> = ({ products }) => {
   };
 
   useEffect(() => {
-    if (!products) return;
-    const newProducts: (ProductRow | undefined)[] = checkList
-      .map((checkId) => products
-        .find((product) => product.id === checkId));
-    setCheckedProducts(newProducts);
+    const newProducts = checkList
+      .map((checkId) => products.find((product) => product.id === checkId));
+    let array: ProductRow[] = [];
+    newProducts.forEach((product) => {
+      if (product !== undefined) {
+        array.push(product);
+      }
+    });
+    setCheckedProducts(array);
   }, [products, checkList]);
 
-  const removeProducts = async (products: (ProductRow | undefined)[]) => {
+  const removeProducts = async (products: ProductRow[]) => {
     if (products.length === 0) return;
     const result = confirm(`削除して宜しいでしょうか"`);
     if (!result) return;
@@ -70,11 +73,11 @@ const AllProductsTable: FC<Props> = ({ products }) => {
     <div className="w-full">
       <div>
         <div className="h-8">
-          {checkList.length > 0 &&
+          {(checkedProducts && checkList.length > 0) &&
             <div className="flex justify-between gap-3">
               <div className="flex gap-3">
-                <IncomingModal checkedProducts={checkedProducts} />
-                <OutgoingModal checkedProducts={checkedProducts} />
+                <InOutStockModal checkedProducts={checkedProducts} pageType="IN" />
+                <InOutStockModal checkedProducts={checkedProducts} pageType="OUT" />
               </div>
               <Button colorScheme="red" onClick={() => removeProducts(checkedProducts)}>削除</Button>
             </div>
@@ -99,9 +102,9 @@ const AllProductsTable: FC<Props> = ({ products }) => {
             <th className={`${ThStyle}`}>サイズ</th>
             <th className={`${ThStyle}`}>カテゴリー</th>
             <th className={`${ThStyle}`}>仕入先</th>
-            <th className={`${ThStyle} "text-center"`}>価格</th>
-            <th className={`${ThStyle} "text-right"`}>徳島在庫</th>
-            <th className={`${ThStyle} "text-center"`}>アクション</th>
+            <th className={`${ThStyle} text-center`}>価格</th>
+            <th className={`${ThStyle} text-right`}>徳島在庫</th>
+            <th className={`${ThStyle} text-center`}>アクション</th>
           </tr>
         </thead>
         <tbody className="text-sm">

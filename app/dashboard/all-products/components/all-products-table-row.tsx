@@ -100,8 +100,10 @@ const AllProductsTableRow: FC<Props> = React.memo(({ product, setCheckList, chec
       <td className={`${TdStyle}`}>{product.size}</td>
       <td className={`${TdStyle}`}>{product.categories?.category_name}</td>
       <td className={`${TdStyle}`}>{product.suppliers?.supplier_name}</td>
-      <td className={`${TdStyle} "text-right"`} >{product.price}</td>
-      <td className={`${TdStyle} "text-right"`} >{product.skus && product?.skus[0]?.stock}</td>
+      <td className={`${TdStyle} text-right`}>{product.price}</td>
+      <td className={`${TdStyle} text-right`}>
+        {product.skus && product?.skus[0]?.stock ? product?.skus[0]?.stock : 0}
+      </td>
       <td className={`${TdStyle}`}>
         <div className="flex justify-center gap-3 text-lg">
           <EditProductModal product={product} />
