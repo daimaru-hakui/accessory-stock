@@ -1,24 +1,25 @@
-import Button from '@/components/ui/Button';
-import Modal from '@/components/ui/modal';
-import Select from '@/components/ui/select';
-import { Database } from '@/schema';
-import { useStore } from '@/store';
-import React, { useState, FC } from 'react';
+import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/modal";
+import Select from "@/components/ui/select";
+import { Database } from "@/schema";
+import { useStore } from "@/store";
+import React, { useState, FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import IncommingTableRow from './in-out-stock-table-row';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter } from 'next/navigation';
+import IncommingTableRow from "./in-out-stock-table-row";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number; }[] | null;
-  suppliers: { id: string; supplier_name: string; } | null;
-  categories: { id: string; category_name: string; } | null;
+  skus: { id: string; stock: number }[] | null;
+  suppliers: { id: string; supplier_name: string } | null;
+  categories: { id: string; category_name: string } | null;
 }
 interface Props {
   checkedProducts: ProductRow[];
   pageType: "IN" | "OUT";
+  handleCheckList: () => void;
 }
 
 type Inputs = {
@@ -31,8 +32,11 @@ type Inputs = {
   }[];
 };
 
-
-const InOutStockTableModal: FC<Props> = ({ checkedProducts, pageType }) => {
+const InOutStockTableModal: FC<Props> = ({
+  checkedProducts,
+  pageType,
+  handleCheckList,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const supabase = createClientComponentClient<Database>();
@@ -57,22 +61,29 @@ const InOutStockTableModal: FC<Props> = ({ checkedProducts, pageType }) => {
     }
     reset();
     setIsOpen(false);
+    // handleCheckList()
     router.refresh();
   };
 
   const incommingUpdateStock = async (data: Inputs) => {
     data.contents.forEach(async (content) => {
-      await supabase.from("skus").update({
-        stock: Number(content.stock) + (Number(content.quantity) || 0)
-      }).eq("id", content.skuId);
+      await supabase
+        .from("skus")
+        .update({
+          stock: Number(content.stock) + (Number(content.quantity) || 0),
+        })
+        .eq("id", content.skuId);
     });
   };
 
   const outgoingUpdateStock = async (data: Inputs) => {
     data.contents.forEach(async (content) => {
-      await supabase.from("skus").update({
-        stock: Number(content.stock) - (Number(content.quantity) || 0)
-      }).eq("id", content.skuId);
+      await supabase
+        .from("skus")
+        .update({
+          stock: Number(content.stock) - (Number(content.quantity) || 0),
+        })
+        .eq("id", content.skuId);
     });
   };
   // const incommingAddStock = async (data: Inputs) => {
@@ -105,18 +116,26 @@ const InOutStockTableModal: FC<Props> = ({ checkedProducts, pageType }) => {
       <Button
         colorScheme={pageType === "IN" ? "green" : "orange"}
         className="cursor-pointer"
-        onClick={() => setIsOpen(true)}>
+        onClick={() => setIsOpen(true)}
+      >
         {pageType === "IN" ? "入庫" : "出庫"}
       </Button>
-      <Modal title={pageType === "IN" ? "入庫" : "出庫"} isOpen={isOpen} setIsOpen={setIsOpen} closeButton={false}>
+      <Modal
+        title={pageType === "IN" ? "入庫" : "出庫"}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        closeButton={false}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <Select
             label={pageType === "IN" ? "入庫場所" : "出庫場所"}
-            className='min-w-[calc(150px)]'
+            className="min-w-[calc(150px)]"
             onChange={(e) => setStockPlaceId(e.target.value)}
           >
             {stockPlaces.map((place) => (
-              <option key={place.id} value={place.id}>{place.stock_place_name}</option>
+              <option key={place.id} value={place.id}>
+                {place.stock_place_name}
+              </option>
             ))}
           </Select>
           <table className="w-full mt-3">
@@ -130,7 +149,9 @@ const InOutStockTableModal: FC<Props> = ({ checkedProducts, pageType }) => {
                 <th className={`${ThStyle}`}>価格</th>
                 <th className={`${ThStyle} text-right`}>徳島在庫</th>
                 <th className={`${ThStyle}`}>数量</th>
-                <th className={`${ThStyle}`}>{pageType === "IN" ? "入荷日" : "出荷日"}</th>
+                <th className={`${ThStyle}`}>
+                  {pageType === "IN" ? "入荷日" : "出荷日"}
+                </th>
                 <th className={`${ThStyle} text-center`}>アクション</th>
               </tr>
             </thead>
@@ -146,18 +167,20 @@ const InOutStockTableModal: FC<Props> = ({ checkedProducts, pageType }) => {
               ))}
             </tbody>
           </table>
-          <div className='flex gap-3 justify-end'>
+          <div className="flex gap-3 justify-end">
             <Button
               variant="outline"
-              className='mt-6'
+              className="mt-6"
               onClick={() => setIsOpen(false)}
             >
               閉じる
             </Button>
-            <Button type='submit' colorScheme='blue' className='mt-6'>登録</Button>
+            <Button type="submit" colorScheme="blue" className="mt-6">
+              登録
+            </Button>
           </div>
         </form>
-      </Modal >
+      </Modal>
     </>
   );
 };

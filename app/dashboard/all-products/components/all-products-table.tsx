@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { FC, useState, useEffect } from "react";
 import AllProductsTableRow from "./all-products-table-row";
 import { Database } from "@/schema";
@@ -10,9 +10,9 @@ import InOutStockModal from "./in-out-stock-table-modal";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number; }[] | null;
-  suppliers: { id: string; supplier_name: string; } | null;
-  categories: { id: string; category_name: string; } | null;
+  skus: { id: string; stock: number }[] | null;
+  suppliers: { id: string; supplier_name: string } | null;
+  categories: { id: string; category_name: string } | null;
 }
 interface Props {
   products: ProductRow[];
@@ -35,8 +35,9 @@ const AllProductsTable: FC<Props> = ({ products }) => {
   };
 
   useEffect(() => {
-    const newProducts = checkList
-      .map((checkId) => products.find((product) => product.id === checkId));
+    const newProducts = checkList.map((checkId) =>
+      products.find((product) => product.id === checkId)
+    );
     let array: ProductRow[] = [];
     newProducts.forEach((product) => {
       if (product !== undefined) {
@@ -54,7 +55,7 @@ const AllProductsTable: FC<Props> = ({ products }) => {
       const { error } = await supabase
         .from("products")
         .update({
-          deleted_at: new Date()
+          deleted_at: new Date(),
         })
         .eq("id", product?.id);
       if (error) {
@@ -73,15 +74,28 @@ const AllProductsTable: FC<Props> = ({ products }) => {
     <div className="w-full">
       <div>
         <div className="h-8">
-          {(checkedProducts && checkList.length > 0) &&
+          {checkedProducts && checkList.length > 0 && (
             <div className="flex justify-between gap-3">
               <div className="flex gap-3">
-                <InOutStockModal checkedProducts={checkedProducts} pageType="IN" />
-                <InOutStockModal checkedProducts={checkedProducts} pageType="OUT" />
+                <InOutStockModal
+                  checkedProducts={checkedProducts}
+                  pageType="IN"
+                  handleCheckList={handleCheckList}
+                />
+                <InOutStockModal
+                  checkedProducts={checkedProducts}
+                  pageType="OUT"
+                  handleCheckList={handleCheckList}
+                />
               </div>
-              <Button colorScheme="red" onClick={() => removeProducts(checkedProducts)}>削除</Button>
+              <Button
+                colorScheme="red"
+                onClick={() => removeProducts(checkedProducts)}
+              >
+                削除
+              </Button>
             </div>
-          }
+          )}
         </div>
       </div>
       <table className="w-full mt-3">
@@ -89,7 +103,9 @@ const AllProductsTable: FC<Props> = ({ products }) => {
           <tr className="border-b h-12">
             <th className={`${ThStyle}`}>
               <div className="w-6 flex items-center justify-center">
-                <input type="checkbox" checked={checkList.length > 0 ? true : false}
+                <input
+                  type="checkbox"
+                  checked={checkList.length > 0 ? true : false}
                   onChange={handleCheckList}
                   className="cursor-pointer"
                 />
@@ -109,7 +125,8 @@ const AllProductsTable: FC<Props> = ({ products }) => {
         </thead>
         <tbody className="text-sm">
           {products?.map((product) => (
-            <AllProductsTableRow key={product.id}
+            <AllProductsTableRow
+              key={product.id}
               product={product}
               setCheckList={setCheckList}
               check={check}
