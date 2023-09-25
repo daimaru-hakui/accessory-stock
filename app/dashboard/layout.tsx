@@ -14,23 +14,15 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
   const setCategories = useStore((state) => state.setCategories);
   const setStockPlaces = useStore((state) => state.setStockPlaces);
 
-  useEffect(() => {
-    getSuppliers();
-  }, []);
-
-  useEffect(() => {
-    getCategories();
-  }, []);
-
-  useEffect(() => {
-    getStockPlaces();
-  }, []);
-
   const getSuppliers = useCallback(async () => {
     const { data, error } = await supabase.from("suppliers").select("*");
     if (!data) return;
     setSuppliers(data);
   }, [supabase, setSuppliers]);
+
+  useEffect(() => {
+    getSuppliers();
+  }, [getSuppliers]);
 
   const getCategories = useCallback(async () => {
     const { data, error } = await supabase.from("categories").select("*");
@@ -38,11 +30,19 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
     setCategories(data);
   }, [supabase, setCategories]);
 
+  useEffect(() => {
+    getCategories();
+  }, [getCategories]);
+
   const getStockPlaces = useCallback(async () => {
     const { data, error } = await supabase.from("stock_places").select("*");
     if (!data) return;
     setStockPlaces(data);
   }, [supabase, setStockPlaces]);
+
+  useEffect(() => {
+    getStockPlaces();
+  }, [getStockPlaces]);
 
   console.log("dashboard");
   return (
