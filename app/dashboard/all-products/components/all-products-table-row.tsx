@@ -4,10 +4,11 @@ import Modal from "@/components/ui/modal";
 import { Database } from "@/schema";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-import React, { FC, useRef, useEffect } from "react";
+import React, { FC, useRef, useEffect, useCallback } from "react";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import OrderProduct from "./order-product";
 import EditProductModal from "./edit-product-modal";
+import { useStore } from "@/store";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -18,13 +19,15 @@ interface ProductRow extends Product {
 }
 interface Props {
   product: ProductRow;
-  setCheckList: React.Dispatch<React.SetStateAction<string[]>>;
   check: "ADD" | "REMOVE" | "NONE";
   setCheck: React.Dispatch<React.SetStateAction<"ADD" | "REMOVE" | "NONE">>;
 }
 
-const AllProductsTableRow: FC<Props> = React.memo(({ product, setCheckList, check, setCheck }): JSX.Element => {
+const AllProductsTableRow: FC<Props> = React.memo(({ product, check, setCheck }): JSX.Element => {
   const router = useRouter();
+  const checkedList = useStore((state) => state.checkedList);
+  const setCheckedList = useStore((state) => state.setCheckedList);
+  const removeCheckedList = useStore((state) => state.removeCheckedList);
   const supabase = createClientComponentClient();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,24 +43,12 @@ const AllProductsTableRow: FC<Props> = React.memo(({ product, setCheckList, chec
       return;
     }
   };
-  // const deleteProduct = async (id: string, title: string = "") => {
-  //   const result = confirm(`${title}を削除して宜しいでしょうか"`);
-  //   if (!result) return;
-  //   const { error } = await supabase.from("products").delete().eq("id", id);
-  //   router.refresh();
-  //   if (error) {
-  //     console.log(error);
-  //     return;
-  //   }
-  // };
+
   const handleCheckInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked === true) {
-      setCheckList((prevState: string[]) => [...prevState, e.target.name]);
+      setCheckedList([e.target.name]);
     } else {
-      setCheckList((prevState: string[]) => {
-        const newCheckList = prevState.filter((check: string) => check !== e.target.name);
-        return newCheckList;
-      });
+      removeCheckedList(checkedList.filter((check: string) => check !== e.target.name));
     }
   };
 
@@ -68,10 +59,17 @@ const AllProductsTableRow: FC<Props> = React.memo(({ product, setCheckList, chec
       setCheck("NONE");
     } else if (check === "ADD") {
       inputRef.current.checked = true;
-      setCheckList((prevState: string[]) => [...prevState, product.id]);
+      setCheckedList([product.id]);
       setCheck("NONE");
     }
-  }, [product.id, check, setCheck, setCheckList]);
+  }, [check, product.id, setCheck, setCheckedList]);
+
+  useEffect(() => {
+    if (!inputRef.current) return;
+    const result = checkedList.includes(product.id);
+    if (result) inputRef.current.checked = true;
+    if (!result) inputRef.current.checked = false;
+  }, [checkedList, product.id]);
 
   const TdStyle = "p-1";
 
@@ -89,7 +87,7 @@ const AllProductsTableRow: FC<Props> = React.memo(({ product, setCheckList, chec
         </div>
       </td>
       <td className={`${TdStyle}`}><OrderProduct /></td>
-      <td className={`${TdStyle}`}>{product.use_type === "READY" ? <span>既成</span> :  <span>別注</span>}</td>
+      <td className={`${TdStyle}`}>{product.use_type === "READY" ? <span>既成</span> : <span>別注</span>}</td>
       <td className={`${TdStyle}`}>
         <div>
           <div>{product.product_number}</div>

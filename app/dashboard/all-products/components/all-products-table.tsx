@@ -5,14 +5,15 @@ import { Database } from "@/schema";
 import Button from "@/components/ui/Button";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-import InOutStockModal from "./in-out-stock-table-modal";
+import InOutStockTableModal from "./in-out-stock-table-modal";
+import { useStore } from "@/store";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 interface Props {
   products: ProductRow[];
@@ -20,22 +21,25 @@ interface Props {
 
 const AllProductsTable: FC<Props> = ({ products }) => {
   const [check, setCheck] = useState<"ADD" | "REMOVE" | "NONE">("NONE");
-  const [checkList, setCheckList] = useState<string[]>([]);
-  const [checkedProducts, setCheckedProducts] = useState<ProductRow[]>();
+  // const [checkList, setCheckList] = useState<string[]>([]);
+  const checkedProducts = useStore((state) => state.checkedProducts);
+  const setCheckedProducts = useStore((state) => state.setCheckedProducts);
+  const checkedList = useStore((state) => state.checkedList);
+  const resetCheckedList = useStore((state) => state.resetCheckedList);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
-  const handleCheckList = () => {
-    if (checkList.length === 0) {
+  const handleAllCheckedList = () => {
+    if (checkedList.length === 0) {
       setCheck("ADD");
     } else {
-      setCheckList([]);
+      resetCheckedList();
       setCheck("REMOVE");
     }
   };
 
   useEffect(() => {
-    const newProducts = checkList.map((checkId) =>
+    const newProducts = checkedList.map((checkId) =>
       products.find((product) => product.id === checkId)
     );
     let array: ProductRow[] = [];
@@ -45,7 +49,7 @@ const AllProductsTable: FC<Props> = ({ products }) => {
       }
     });
     setCheckedProducts(array);
-  }, [products, checkList]);
+  }, [products, checkedList, setCheckedProducts]);
 
   const removeProducts = async (products: ProductRow[]) => {
     if (products.length === 0) return;
@@ -63,7 +67,7 @@ const AllProductsTable: FC<Props> = ({ products }) => {
         return;
       }
     });
-    setCheckList([]);
+    resetCheckedList();
     setCheck("REMOVE");
     router.refresh();
   };
@@ -74,18 +78,14 @@ const AllProductsTable: FC<Props> = ({ products }) => {
     <div className="w-full">
       <div>
         <div className="h-8">
-          {checkedProducts && checkList.length > 0 && (
+          {checkedProducts && checkedList.length > 0 && (
             <div className="flex justify-between gap-3">
               <div className="flex gap-3">
-                <InOutStockModal
-                  checkedProducts={checkedProducts}
+                <InOutStockTableModal
                   pageType="IN"
-                  handleCheckList={handleCheckList}
                 />
-                <InOutStockModal
-                  checkedProducts={checkedProducts}
+                <InOutStockTableModal
                   pageType="OUT"
-                  handleCheckList={handleCheckList}
                 />
               </div>
               <Button
@@ -105,8 +105,8 @@ const AllProductsTable: FC<Props> = ({ products }) => {
               <div className="w-6 flex items-center justify-center">
                 <input
                   type="checkbox"
-                  checked={checkList.length > 0 ? true : false}
-                  onChange={handleCheckList}
+                  checked={checkedList.length > 0 ? true : false}
+                  onChange={handleAllCheckedList}
                   className="cursor-pointer"
                 />
               </div>
@@ -128,7 +128,6 @@ const AllProductsTable: FC<Props> = ({ products }) => {
             <AllProductsTableRow
               key={product.id}
               product={product}
-              setCheckList={setCheckList}
               check={check}
               setCheck={setCheck}
             />

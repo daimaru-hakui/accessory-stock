@@ -5,21 +5,19 @@ import { Database } from "@/schema";
 import { useStore } from "@/store";
 import React, { useState, FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import IncommingTableRow from "./in-out-stock-table-row";
+import InOutStockTableRow from "./in-out-stock-table-row";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 interface Props {
-  checkedProducts: ProductRow[];
   pageType: "IN" | "OUT";
-  handleCheckList: () => void;
 }
 
 type Inputs = {
@@ -33,12 +31,11 @@ type Inputs = {
 };
 
 const InOutStockTableModal: FC<Props> = ({
-  checkedProducts,
   pageType,
-  handleCheckList,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const checkedProducts = useStore((state) => state.checkedProducts);
   const supabase = createClientComponentClient<Database>();
   const stockPlaces = useStore((state) => state.stockPlaces);
   const [stockPlaceId, setStockPlaceId] = useState<number>(0);
@@ -47,6 +44,7 @@ const InOutStockTableModal: FC<Props> = ({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -61,7 +59,6 @@ const InOutStockTableModal: FC<Props> = ({
     }
     reset();
     setIsOpen(false);
-    // handleCheckList()
     router.refresh();
   };
 
@@ -86,28 +83,6 @@ const InOutStockTableModal: FC<Props> = ({
         .eq("id", content.skuId);
     });
   };
-  // const incommingAddStock = async (data: Inputs) => {
-  //   data.contents.forEach(async (content) => {
-  //     const { data: sku } = await supabase
-  //       .from("skus")
-  //       .select("*")
-  //       .eq("id", content.skuId)
-  //       .single();
-  //     if (!sku) {
-  //       await supabase.from("skus").insert({
-  //         stock: Number(content.quantity),
-  //         stock_place_id: stockPlaceId,
-  //         product_id: content.productId
-  //       });
-  //     } else {
-  //       await supabase
-  //         .from("skus")
-  //         .update({
-  //           stock: (Number(sku.stock) || 0) + Number(content.quantity)
-  //         }).eq("id", content.skuId);
-  //     }
-  //   });
-  // };
 
   const ThStyle = "p-1 px-3 w-auto";
 
@@ -157,12 +132,13 @@ const InOutStockTableModal: FC<Props> = ({
             </thead>
             <tbody>
               {checkedProducts.map((product, idx) => (
-                <IncommingTableRow
+                <InOutStockTableRow
                   key={product.id}
                   product={product}
-                  register={register}
-                  idx={idx}
                   stockPlaceId={stockPlaceId}
+                  register={register}
+                  control={control}
+                  idx={idx}
                 />
               ))}
             </tbody>

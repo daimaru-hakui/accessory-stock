@@ -18,6 +18,7 @@ type Props = {
 const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
   const suppliers = useStore((state) => state.suppliers);
   const categories = useStore((state) => state.categories);
+  const stockPlaces = useStore((state) => state.stockPlaces);
   const router = useRouter();
   const supabase = createClientComponentClient();
   const {
@@ -64,9 +65,11 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
     }
 
     if (product) {
-      await supabase.from("skus").insert({
-        product_id: product?.id,
-        stock_place_id: 0,
+      stockPlaces.filter(async (place) => {
+        await supabase.from("skus").insert({
+          product_id: product?.id,
+          stock_place_id: place.id,
+        });
       });
     }
 

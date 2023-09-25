@@ -1,7 +1,9 @@
 import Input from '@/components/ui/input';
 import { Database } from '@/schema';
+import { useStore } from '@/store';
 import React, { FC } from 'react';
-import { UseFormRegister } from 'react-hook-form';
+import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
+import { AiOutlineClose } from "react-icons/ai";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -13,6 +15,7 @@ interface ProductRow extends Product {
 interface Props {
   product: ProductRow;
   register: UseFormRegister<Inputs>;
+  control: Control<Inputs>;
   idx: number;
   stockPlaceId: number;
 }
@@ -27,7 +30,28 @@ type Inputs = {
   }[];
 };
 
-const IncommingTableRow: FC<Props> = ({ product, register, idx, stockPlaceId }) => {
+const InOutStockTableRow: FC<Props> = ({ product, register, control, idx, stockPlaceId }) => {
+  const checkedProducts = useStore((state) => state.checkedProducts);
+  const setCheckedProducts = useStore((state) => state.setCheckedProducts);
+  const removeCheckedList = useStore((state) => state.removeCheckedList);
+
+  const handleCheckedClose = (idx: number) => {
+    const newProducts = checkedProducts.filter((_, index: number) => (
+      index !== idx
+    ));
+    setCheckedProducts(newProducts);
+    const newList = newProducts.map((product) => (
+      product.id
+    ));
+    removeCheckedList(newList);
+    remove(idx);
+  };
+
+
+  const { remove } = useFieldArray({
+    control,
+    name: "contents",
+  });
 
   const TdStyle = "p-1 px-3 ";
 
@@ -79,8 +103,14 @@ const IncommingTableRow: FC<Props> = ({ product, register, idx, stockPlaceId }) 
           register={{ ...register(`contents.${idx}.arrivalDate`) }}
         />
       </td>
+      <td>
+        <div className="flex justify-center">
+          <AiOutlineClose className="cursor-pointer"
+            onClick={() => handleCheckedClose(idx)} />
+        </div>
+      </td>
     </tr>
   );
 };
 
-export default IncommingTableRow;
+export default InOutStockTableRow;
