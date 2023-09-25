@@ -2,7 +2,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import React from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import LoginForm from "@/components/auth/login-form";
+import LoginForm from "@/app/login/components/login-form";
 
 const Login = async () => {
   const supabase = createServerComponentClient({ cookies });
@@ -11,7 +11,7 @@ const Login = async () => {
   } = await supabase.auth.getSession();
 
   if (session) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   return (

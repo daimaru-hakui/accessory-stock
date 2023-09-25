@@ -3,8 +3,8 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Button from "../ui/Button";
-import Input from "../ui/input";
+import Button from "../../../components/ui/Button";
+import Input from "../../../components/ui/input";
 
 type Inputs = {
   email: string;
@@ -34,7 +34,7 @@ const LoginForm = () => {
       return;
     }
     if (user) {
-      router.push("/");
+      router.push("/dashboard");
     }
   };
 
