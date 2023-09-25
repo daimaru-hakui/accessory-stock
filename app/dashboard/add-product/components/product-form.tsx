@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { EditedProduct } from "@/types";
 import { useStore } from "@/store";
 
-
 type Props = {
   defaultValues: EditedProduct;
   id?: string;
@@ -28,7 +27,7 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
     reset,
     formState: { errors },
   } = useForm<EditedProduct>({
-    defaultValues
+    defaultValues,
   });
   const onSubmit: SubmitHandler<EditedProduct> = async (data) => {
     switch (pageType) {
@@ -42,27 +41,37 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
   };
 
   const addProduct = async (data: EditedProduct) => {
-    const { data: product, error } = await supabase.from("products").insert({
-      use_type: data.use_type,
-      category_id: data.category_id,
-      product_number: data.product_number.trim(),
-      product_name: data.product_name.trim(),
-      size: data.size.trim(),
-      price: Number(data.price),
-      color_number: data.color_number.trim(),
-      color_name: data.color_name.trim(),
-      supplier_id: data.supplier_id,
-      lot_number: "",
-    });
+    const { data: product, error } = await supabase
+      .from("products")
+      .insert({
+        use_type: data.use_type,
+        category_id: data.category_id,
+        product_number: data.product_number.trim(),
+        product_name: data.product_name.trim(),
+        size: data.size.trim(),
+        price: Number(data.price),
+        color_number: data.color_number.trim(),
+        color_name: data.color_name.trim(),
+        supplier_id: data.supplier_id,
+        lot_number: "",
+      })
+      .select("*")
+      .single();
 
     if (error) {
       console.log(error);
       return;
     }
-    if (data) {
-      router.refresh();
-      reset();
+
+    if (product) {
+      await supabase.from("skus").insert({
+        product_id: product?.id,
+        stock_place_id: 0,
+      });
     }
+
+    router.refresh();
+    reset();
   };
 
   const updateProduct = async (data: EditedProduct, id: string) => {
@@ -79,14 +88,14 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
         color_name: data.color_name.trim(),
         supplier_id: data.supplier_id,
         lot_number: "",
-      }).eq("id", id);
+      })
+      .eq("id", id);
     if (error) {
       console.log(error);
       return;
     }
     if (data) {
       router.refresh();
-
     }
   };
 
@@ -105,9 +114,7 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
               value="READY"
               {...register("use_type", { required: true })}
             />
-            <label
-              htmlFor="ready"
-              className="cursor-pointer">
+            <label htmlFor="ready" className="cursor-pointer">
               既製品用
             </label>
           </div>
@@ -118,7 +125,9 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
               value="CUSTOM"
               {...register("use_type", { required: true })}
             />
-            <label htmlFor="custom" className="cursor-pointer">別注品用</label>
+            <label htmlFor="custom" className="cursor-pointer">
+              別注品用
+            </label>
           </div>
         </div>
         <div>
