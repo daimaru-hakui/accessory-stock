@@ -89,7 +89,7 @@ const AllProductsTableRow: FC<Props> = React.memo(({ product, setCheckList, chec
         </div>
       </td>
       <td className={`${TdStyle}`}><OrderProduct /></td>
-      <td className={`${TdStyle}`}>{product.use_type === "READY" ? "既成" : "別注"}</td>
+      <td className={`${TdStyle}`}>{product.use_type === "READY" ? <span>既成</span> :  <span>別注</span>}</td>
       <td className={`${TdStyle}`}>
         <div>
           <div>{product.product_number}</div>
