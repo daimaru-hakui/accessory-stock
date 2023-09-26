@@ -2,10 +2,6 @@
 import React, { FC, useState, useEffect } from "react";
 import AllProductsTableRow from "./all-products-table-row";
 import { Database } from "@/schema";
-import Button from "@/components/ui/Button";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
-import InOutStockTableModal from "./in-out-stock-table-modal";
 import { useStore } from "@/store";
 import InOutStockArea from "./in-out-stock-area";
 
@@ -53,7 +49,7 @@ const AllProductsTable: FC<Props> = ({ products }) => {
 
   return (
     <div className="w-full">
-      <InOutStockArea setCheck={setCheck}/>
+      <InOutStockArea setCheck={setCheck} />
       <table className="w-full mt-3">
         <thead className="text-left text-xs">
           <tr className="border-b h-12">

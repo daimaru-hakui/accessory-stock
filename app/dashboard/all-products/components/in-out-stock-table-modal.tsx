@@ -12,9 +12,9 @@ import { useRouter } from "next/navigation";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 interface Props {
   pageType: "IN" | "OUT";
@@ -49,11 +49,12 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
     console.log(data);
     switch (pageType) {
       case "IN":
-        await incommingUpdateStock(data);
-        await incommingAddDetail(data)
+        await incomingUpdateStock(data);
+        await incomingAddDetail(data);
         break;
       case "OUT":
         await outgoingUpdateStock(data);
+        await outgoingAddDetail(data);
         break;
     }
     reset();
@@ -61,7 +62,7 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
     router.refresh();
   };
 
-  const incommingUpdateStock = async (data: Inputs) => {
+  const incomingUpdateStock = async (data: Inputs) => {
     data.contents.forEach(async (content) => {
       await supabase
         .from("skus")
@@ -72,17 +73,18 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
     });
   };
 
-  const incommingAddDetail = async (data: Inputs) => {
+  const incomingAddDetail = async (data: Inputs) => {
     const newData = data.contents.map((content) => ({
-      sku_id: content.skuId,
+      product_id: content.productId,
       quantity: Number(content.quantity),
       create_user: null,
-      incoming_date_time: null,
+      incoming_date_time: content.arrivalDate,
+      stock_place_id: stockPlaceId
     }));
-    console.log(newData)
-    console.log(supabase.auth.getUser())
-    const {data:inccoming,error}=await supabase.from("incomming_details").insert(newData);
-    console.log("error",error)
+    console.log(newData);
+    console.log(supabase.auth.getUser());
+    const { data: incoming, error } = await supabase.from("incoming_details").insert(newData);
+    console.log("error", error);
   };
 
   const outgoingUpdateStock = async (data: Inputs) => {
@@ -94,6 +96,20 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
         })
         .eq("id", content.skuId);
     });
+  };
+
+  const outgoingAddDetail = async (data: Inputs) => {
+    const newData = data.contents.map((content) => ({
+      product_id: content.productId,
+      quantity: Number(content.quantity),
+      create_user: null,
+      outgoing_date_time: content.arrivalDate,
+      stock_place_id: stockPlaceId
+    }));
+    console.log(newData);
+    console.log(supabase.auth.getUser());
+    const { data: outgoing, error } = await supabase.from("outgoing_details").insert(newData);
+    console.log("error", error);
   };
 
   const ThStyle = "p-1 px-3 w-auto";
