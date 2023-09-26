@@ -1,0 +1,62 @@
+import { Database } from '@/schema';
+import React, { FC } from 'react';
+import IncomingTableRow from './incoming-table-row';
+
+type IncomingDetail = Database["public"]["Tables"]["incoming_details"]["Row"];
+type OutgoingDetail = Database["public"]["Tables"]["outgoing_details"]["Row"];
+type Product = Database["public"]["Tables"]["products"]["Row"];
+type StockPlace = Database["public"]["Tables"]["stock_places"]["Row"];
+type Category = Database["public"]["Tables"]["categories"]["Row"];
+type Supplier = Database["public"]["Tables"]["suppliers"]["Row"];
+
+interface Products extends Product {
+  categories: Category | null;
+  suppliers: Supplier | null;
+}
+
+interface Incoming extends IncomingDetail {
+  products: Products | null;
+  stock_places: StockPlace | null;
+}
+
+interface Outgoing extends OutgoingDetail {
+  products: Products | null;
+  stock_places: StockPlace | null;
+}
+
+interface Props {
+  incomingDetails: Incoming[];
+}
+
+const IncomingTable: FC<Props> = ({ incomingDetails }) => {
+
+  const ThStyle = "p-1";
+
+  return (
+    <table className="w-full mt-3">
+      <thead className="text-left text-xs">
+        <tr className="border-b h-12">
+          <th className={`${ThStyle}`}>入庫日</th>
+          <th className={`${ThStyle}`}>既成/別注</th>
+          <th className={`${ThStyle}`}>品番/品名</th>
+          <th className={`${ThStyle}`}>カラー</th>
+          <th className={`${ThStyle} `}>サイズ</th>
+          <th className={`${ThStyle}`}>カテゴリー</th>
+          <th className={`${ThStyle}`}>仕入先</th>
+          <th className={`${ThStyle} text-center`}>価格</th>
+          <th className={`${ThStyle} text-center`}>数量</th>
+        </tr>
+      </thead>
+      <tbody className="text-sm">
+        {incomingDetails?.map((incomingDetail) => (
+          <IncomingTableRow
+            key={incomingDetail.id}
+            incomingDetail={incomingDetail}
+          />
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export default IncomingTable;
