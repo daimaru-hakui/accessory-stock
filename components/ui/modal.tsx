@@ -40,8 +40,8 @@ const Modal: FC<Props> = ({ title = "", children, isOpen, setIsOpen, top = 48, c
                   </div>
 
                   {closeButton && (
-                    <div className="mt-6 text-right">
-                      <Button variant="outline" onClick={onClose}>閉じる</Button>
+                    <div className="mt-3 text-right">
+                      <Button colorScheme="gray" variant="outline" onClick={onClose}>閉じる</Button>
                     </div>
                   )}
                 </div>

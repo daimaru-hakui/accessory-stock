@@ -12,9 +12,9 @@ import { useRouter } from "next/navigation";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number; }[] | null;
-  suppliers: { id: string; supplier_name: string; } | null;
-  categories: { id: string; category_name: string; } | null;
+  skus: { id: string; stock: number }[] | null;
+  suppliers: { id: string; supplier_name: string } | null;
+  categories: { id: string; category_name: string } | null;
 }
 interface Props {
   pageType: "IN" | "OUT";
@@ -30,16 +30,14 @@ type Inputs = {
   }[];
 };
 
-const InOutStockTableModal: FC<Props> = ({
-  pageType,
-}) => {
+const InOutStockTableModal: FC<Props> = ({ pageType }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const session = useStore((state) => state.session);
   const checkedProducts = useStore((state) => state.checkedProducts);
   const supabase = createClientComponentClient<Database>();
   const stockPlaces = useStore((state) => state.stockPlaces);
   const [stockPlaceId, setStockPlaceId] = useState<number>(0);
-
   const {
     register,
     handleSubmit,
@@ -52,6 +50,7 @@ const InOutStockTableModal: FC<Props> = ({
     switch (pageType) {
       case "IN":
         await incommingUpdateStock(data);
+        await incommingAddDetail(data)
         break;
       case "OUT":
         await outgoingUpdateStock(data);
@@ -71,6 +70,19 @@ const InOutStockTableModal: FC<Props> = ({
         })
         .eq("id", content.skuId);
     });
+  };
+
+  const incommingAddDetail = async (data: Inputs) => {
+    const newData = data.contents.map((content) => ({
+      sku_id: content.skuId,
+      quantity: Number(content.quantity),
+      create_user: null,
+      incoming_date_time: null,
+    }));
+    console.log(newData)
+    console.log(supabase.auth.getUser())
+    const {data:inccoming,error}=await supabase.from("incomming_details").insert(newData);
+    console.log("error",error)
   };
 
   const outgoingUpdateStock = async (data: Inputs) => {
@@ -147,11 +159,12 @@ const InOutStockTableModal: FC<Props> = ({
             <Button
               variant="outline"
               className="mt-6"
+              colorScheme="gray"
               onClick={() => setIsOpen(false)}
             >
               閉じる
             </Button>
-            <Button type="submit" colorScheme="blue" className="mt-6">
+            <Button type="submit" className="mt-6">
               登録
             </Button>
           </div>

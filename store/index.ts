@@ -19,7 +19,7 @@ type Store = {
   session: Session | null;
   setSession: (session: Session) => void;
   isSidebar: boolean;
-  toggleSidebar: (isSidebar: boolean) => void;
+  toggleSidebar: () => void;
   suppliers: Supplier[];
   setSuppliers: (suppliers: Supplier[]) => void;
   categories: Categorie[];
@@ -38,7 +38,7 @@ export const useStore = create<Store>((set) => ({
   session: null,
   setSession: (session) => set(() => ({ session: session })),
   isSidebar: true,
-  toggleSidebar: (isSidebar) => set(() => ({ isSidebar: !isSidebar })),
+  toggleSidebar: () => set((state) => ({ isSidebar: !state.isSidebar })),
   suppliers: [],
   setSuppliers: (suppliers) => set({ suppliers }),
   categories: [],

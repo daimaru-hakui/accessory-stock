@@ -7,6 +7,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import InOutStockTableModal from "./in-out-stock-table-modal";
 import { useStore } from "@/store";
+import InOutStockArea from "./in-out-stock-area";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -21,13 +22,9 @@ interface Props {
 
 const AllProductsTable: FC<Props> = ({ products }) => {
   const [check, setCheck] = useState<"ADD" | "REMOVE" | "NONE">("NONE");
-  // const [checkList, setCheckList] = useState<string[]>([]);
-  const checkedProducts = useStore((state) => state.checkedProducts);
   const setCheckedProducts = useStore((state) => state.setCheckedProducts);
   const checkedList = useStore((state) => state.checkedList);
   const resetCheckedList = useStore((state) => state.resetCheckedList);
-  const router = useRouter();
-  const supabase = createClientComponentClient();
 
   const handleAllCheckedList = () => {
     if (checkedList.length === 0) {
@@ -51,53 +48,12 @@ const AllProductsTable: FC<Props> = ({ products }) => {
     setCheckedProducts(array);
   }, [products, checkedList, setCheckedProducts]);
 
-  const removeProducts = async (products: ProductRow[]) => {
-    if (products.length === 0) return;
-    const result = confirm(`削除して宜しいでしょうか"`);
-    if (!result) return;
-    products.forEach(async (product) => {
-      const { error } = await supabase
-        .from("products")
-        .update({
-          deleted_at: new Date(),
-        })
-        .eq("id", product?.id);
-      if (error) {
-        console.log(error);
-        return;
-      }
-    });
-    resetCheckedList();
-    setCheck("REMOVE");
-    router.refresh();
-  };
 
   const ThStyle = "p-1";
 
   return (
     <div className="w-full">
-      <div>
-        <div className="h-8">
-          {checkedProducts && checkedList.length > 0 && (
-            <div className="flex justify-between gap-3">
-              <div className="flex gap-3">
-                <InOutStockTableModal
-                  pageType="IN"
-                />
-                <InOutStockTableModal
-                  pageType="OUT"
-                />
-              </div>
-              <Button
-                colorScheme="red"
-                onClick={() => removeProducts(checkedProducts)}
-              >
-                削除
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
+      <InOutStockArea setCheck={setCheck}/>
       <table className="w-full mt-3">
         <thead className="text-left text-xs">
           <tr className="border-b h-12">

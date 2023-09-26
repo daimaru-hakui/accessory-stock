@@ -13,7 +13,7 @@ const Button: FC<Props> = ({
   children,
   type = "button",
   className,
-  colorScheme = "gray",
+  colorScheme = "blue",
   variant = "solid",
   onClick,
 }) => {

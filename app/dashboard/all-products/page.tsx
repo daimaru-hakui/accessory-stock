@@ -16,7 +16,8 @@ const AllProducts = async () => {
     suppliers(id,supplier_name),
     categories(id,category_name)
    `)
-      .is('deleted_at', null);
+      .is('deleted_at', null)
+      .order("product_name");
     return data;
   };
 

@@ -6,6 +6,7 @@ import "../../app/globals.css";
 import Navbar from "@/components/navbar";
 import { useStore } from "@/store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import DrawerSidebar from "@/components/drawer-sidebar";
 
 const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
   const supabase = createClientComponentClient();
@@ -52,6 +53,7 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
         }`}
     >
       <Sidebar />
+      <DrawerSidebar/>
       <main className="">
         <Navbar />
         <div className="px-6 py-3">{children}</div>

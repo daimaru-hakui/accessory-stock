@@ -1,4 +1,5 @@
 "use client";
+import Logo from "@/app/logo";
 import { useStore } from "@/store";
 import { sidebarLinks } from "@/utils/links";
 import Link from "next/link";
@@ -17,7 +18,7 @@ const Sidebar = () => {
       }}
     >
       <div className="sticky top-0">
-        <div className="px-6 h-12 flex items-center">大丸白衣</div>
+        <div className="px-3 h-12 flex items-center"><Logo/></div>
         <ul className="px-2">
           {sidebarLinks.map(({ path, name, icon }) => (
             <li

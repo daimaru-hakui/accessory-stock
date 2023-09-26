@@ -9,12 +9,12 @@ const Navbar = () => {
   const toggleIsSidebar = useStore((state) => state.toggleSidebar);
 
   return (
-    <div className="flex items-center justify-between w-full h-10 bg-blue-600 sticky top-0">
+    <div className="flex items-center justify-between w-full h-10 bg-indigo-950 sticky top-0">
       <div className="p-2">
         <BiMenuAltLeft
           style={{ fontSize: "24px" }}
           className="cursor-pointer text-white"
-          onClick={() => toggleIsSidebar(isSidebar)}
+          onClick={() => toggleIsSidebar()}
         />
       </div>
       {isSidebar}

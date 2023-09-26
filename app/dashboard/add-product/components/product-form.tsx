@@ -4,10 +4,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
-import Button from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 import { EditedProduct } from "@/types";
 import { useStore } from "@/store";
+import Button from "@/components/ui/Button";
 
 type Props = {
   defaultValues: EditedProduct;
@@ -105,7 +105,7 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-[calc(450px)]"
+      className="w-full max-w-[calc(450px)] pb-6"
     >
       <div className="flex flex-col gap-6">
         <h2 className="font-bold">登録</h2>
@@ -212,7 +212,7 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
           </div>
         </div>
         <div>
-          <Button type="submit" colorScheme="blue" className="w-full">
+          <Button type="submit" className="w-full">
             {pageType === "NEW" ? "登録" : "更新"}
           </Button>
         </div>
