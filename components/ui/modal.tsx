@@ -2,6 +2,7 @@
 import React, { FC, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Button from "./Button";
+import { UseFormReset } from "react-hook-form";
 
 interface Props {
   title?: string;
@@ -10,11 +11,20 @@ interface Props {
   closeButton?: boolean;
   setIsOpen: (bool: boolean) => void;
   top?: number;
+  reset?: UseFormReset<any>;
 }
 
-const Modal: FC<Props> = ({ title = "", children, isOpen, setIsOpen, top = 48, closeButton = true }): JSX.Element => {
+const Modal: FC<Props> = ({
+  title = "",
+  children,
+  isOpen, setIsOpen,
+  top = 48,
+  closeButton = true,
+  reset
+}): JSX.Element => {
   const onClose = () => {
     setIsOpen(false);
+    reset && reset();
   };
   return (
     <>
@@ -41,7 +51,11 @@ const Modal: FC<Props> = ({ title = "", children, isOpen, setIsOpen, top = 48, c
 
                   {closeButton && (
                     <div className="mt-3 text-right">
-                      <Button colorScheme="gray" variant="outline" onClick={onClose}>閉じる</Button>
+                      <Button colorScheme="gray" variant="outline" onClick={() => {
+                        onClose;
+                        reset && reset();
+                      }
+                      }>閉じる</Button>
                     </div>
                   )}
                 </div>

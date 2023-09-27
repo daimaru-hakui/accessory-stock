@@ -30,9 +30,9 @@ const DrawerSidebar: FC = () => {
       >
         <div className="sticky top-0">
           <div className="px-3 h-12 flex items-center justify-between">
-          <div><Logo/></div>
+            <div><Logo /></div>
             <div>
-              <AiOutlineClose className="cursor-pointer" onClick={toggleSidebar}/>
+              <AiOutlineClose className="cursor-pointer" onClick={toggleSidebar} />
             </div>
           </div>
           <ul className="px-2">
@@ -44,7 +44,7 @@ const DrawerSidebar: FC = () => {
                   fontWeight: path === pathname ? "bold" : "normal",
                 }}
               >
-                <Link href={path} className="flex items-center gap-3">
+                <Link href={path} className="flex items-center gap-3" onClick={toggleSidebar}>
                   <div>{icon}</div>
                   <div>{name}</div>
                 </Link>

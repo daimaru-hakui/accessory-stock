@@ -72,6 +72,7 @@ const AllProductsTable: FC<Props> = ({ products }) => {
             <th className={`${ThStyle}`}>仕入先</th>
             <th className={`${ThStyle} text-center`}>価格</th>
             <th className={`${ThStyle} text-right`}>徳島在庫</th>
+            <th className={`${ThStyle} text-right`}>コメント</th>
             <th className={`${ThStyle} text-center`}>アクション</th>
           </tr>
         </thead>

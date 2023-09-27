@@ -1,6 +1,7 @@
 import { MdOutlineDashboardCustomize, MdAddTask } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
 import { RiIndentIncrease, RiIndentDecrease } from "react-icons/ri";
+import { SlCalender } from "react-icons/sl";
 export const menuLinks = [{}];
 
 export const sidebarLinks = [
@@ -18,6 +19,11 @@ export const sidebarLinks = [
     path: "/dashboard/all-products",
     name: "付属品一覧",
     icon: <FaTasks />,
+  },
+  {
+    path: "/dashboard/order",
+    name: "入荷予定",
+    icon: <SlCalender />,
   },
   {
     path: "/dashboard/incoming",

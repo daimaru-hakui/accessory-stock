@@ -94,13 +94,20 @@ const AllProductsTableRow: FC<Props> = React.memo(({ product, check, setCheck })
           <div>{product.product_name}</div>
         </div>
       </td>
-      <td className={`${TdStyle}`}>{product.color_number} <span className="ml-2">{product.color_name}</span></td>
+      <td className={`${TdStyle}`}>{product.color_number}
+        <span className="ml-2">
+          {product.color_name}
+        </span>
+      </td>
       <td className={`${TdStyle}`}>{product.size}</td>
       <td className={`${TdStyle}`}>{product.categories?.category_name}</td>
       <td className={`${TdStyle}`}>{product.suppliers?.supplier_name}</td>
       <td className={`${TdStyle} text-right`}>{product.price}</td>
       <td className={`${TdStyle} text-right`}>
         {product.skus && product?.skus[0]?.stock ? product?.skus[0]?.stock : 0}
+      </td>
+      <td className={`${TdStyle}`}>
+        {product.comment}
       </td>
       <td className={`${TdStyle}`}>
         <div className="flex justify-center gap-3 text-lg">
