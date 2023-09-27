@@ -8,4 +8,5 @@ export type EditedProduct = {
   size: string;
   supplier_id: string;
   price: number | string;
+  comment: string;
 };

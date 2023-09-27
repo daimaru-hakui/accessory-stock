@@ -5,20 +5,21 @@ import Button from "@/components/ui/Button";
 import { Database } from "@/schema";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import OrderTableModal from "./order-table-modal";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 
 interface Props {
-    setCheck:React.Dispatch<SetStateAction<"ADD" | "REMOVE" | "NONE">>
+  setCheck: React.Dispatch<SetStateAction<"ADD" | "REMOVE" | "NONE">>;
 }
 
-const InOutStockArea:FC<Props> = ({setCheck}) => {
+const InOutStockArea: FC<Props> = ({ setCheck }) => {
   const checkedProducts = useStore((state) => state.checkedProducts);
   const checkedList = useStore((state) => state.checkedList);
   const resetCheckedList = useStore((state) => state.resetCheckedList);
@@ -51,7 +52,8 @@ const InOutStockArea:FC<Props> = ({setCheck}) => {
       {checkedProducts && checkedList.length > 0 && (
         <div className="flex justify-between gap-3">
           <div className="flex gap-3">
-            <InOutStockTableModal pageType="IN" />
+            <OrderTableModal />
+            {/* <InOutStockTableModal pageType="IN" /> */}
             <InOutStockTableModal pageType="OUT" />
           </div>
           <Button

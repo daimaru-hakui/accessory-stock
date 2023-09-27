@@ -212,6 +212,14 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
           </div>
         </div>
         <div>
+          <textarea
+            style={{ border: "1px solid #ddd" }}
+            className="w-full"
+            required={true}
+            {...register("comment")}
+          />
+        </div>
+        <div>
           <Button type="submit" className="w-full">
             {pageType === "NEW" ? "登録" : "更新"}
           </Button>
