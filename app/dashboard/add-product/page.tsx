@@ -14,6 +14,7 @@ const AddProduct = async () => {
     size: "",
     supplier_id: "",
     price: "",
+    comment: ""
   };
 
   return (
