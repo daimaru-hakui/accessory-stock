@@ -10,7 +10,8 @@ const Incoming: NextPage = async () => {
   const { data, error } = await supabase
     .from("incoming_details")
     .select(`*,products(*,categories(*),suppliers(*)),stock_places(*)`)
-    .order("incoming_date_time", { ascending: false });
+    .order("created_at", { ascending: false })
+    .order("incoming_date", { ascending: false });
 
   if (error) {
     console.log(error);
@@ -23,7 +24,7 @@ const Incoming: NextPage = async () => {
 
   return (
     <div className="w-full">
-      <h1 className="font-bold text-lg">入庫履歴</h1>
+      <h1 className="font-bold text-lg">入荷履歴</h1>
       <div className="mt-3 flex justify-center items center">
         <IncomingTable incomingDetails={data} />
       </div>

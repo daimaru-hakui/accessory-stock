@@ -40,7 +40,7 @@ const Modal: FC<Props> = ({
             >
               <div
                 style={{ marginTop: `${top}px` }}
-                className="p-6 rounded-md bg-white"
+                className="p-6 rounded-md bg-white mb-6"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex flex-col justify-between">
@@ -52,7 +52,7 @@ const Modal: FC<Props> = ({
                   {closeButton && (
                     <div className="mt-3 text-right">
                       <Button colorScheme="gray" variant="outline" onClick={() => {
-                        onClose;
+                        onClose();
                         reset && reset();
                       }
                       }>閉じる</Button>

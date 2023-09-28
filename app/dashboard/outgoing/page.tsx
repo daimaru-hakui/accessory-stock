@@ -10,7 +10,7 @@ const Outgoing: NextPage = async () => {
   const { data, error } = await supabase
     .from("outgoing_details")
     .select(`*,products(*,categories(*),suppliers(*)),stock_places(*)`)
-    .order("outgoing_date_time", { ascending: false });
+    .order("outgoing_date", { ascending: false });
 
   if (error) {
     console.log(error);
@@ -18,8 +18,6 @@ const Outgoing: NextPage = async () => {
   }
 
   if (!data) return;
-
-  console.log("incoming", data);
 
   return (
     <div className="w-full">

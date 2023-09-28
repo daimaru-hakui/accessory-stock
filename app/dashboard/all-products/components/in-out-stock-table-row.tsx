@@ -21,12 +21,15 @@ interface Props {
 }
 
 type Inputs = {
+  outgoingDate:string;
   contents: {
     productId: string;
     skuId: string;
     stock: number;
     quantity: number;
     arrivalDate: string;
+    orderDate:string;
+    comment:string;
   }[];
 };
 
@@ -46,7 +49,6 @@ const InOutStockTableRow: FC<Props> = ({ product, register, control, idx, stockP
     removeCheckedList(newList);
     remove(idx);
   };
-
 
   const { remove } = useFieldArray({
     control,
@@ -99,8 +101,9 @@ const InOutStockTableRow: FC<Props> = ({ product, register, control, idx, stockP
         />
       </td>
       <td className={`${TdStyle}`}>
-        <Input type="date"
-          register={{ ...register(`contents.${idx}.arrivalDate`) }}
+        <Input
+          type="number"
+          register={{ ...register(`contents.${idx}.comment`) }}
         />
       </td>
       <td>

@@ -1,4 +1,5 @@
 import { Database } from '@/schema';
+import { format } from 'date-fns';
 import React, { FC } from 'react';
 
 type outgoingDetail = Database["public"]["Tables"]["incoming_details"]["Row"];
@@ -33,7 +34,7 @@ const OutgoingTableRow: FC<Props> = ({ outgoingDetail }) => {
   return (
     <tr key={outgoingDetail.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
-        {outgoingDetail.outgoing_date_time}
+        {outgoingDetail.outgoing_date}
       </td>
       <td className={`${TdStyle}`}>
         {outgoingDetail.products?.use_type === "READY" ? "既成" : "別注"}
@@ -60,6 +61,9 @@ const OutgoingTableRow: FC<Props> = ({ outgoingDetail }) => {
       </td>
       <td className={`${TdStyle} text-right`}>
         {outgoingDetail.quantity}
+      </td>
+      <td className={`${TdStyle}`}>
+        {outgoingDetail.comment}
       </td>
 
     </tr >

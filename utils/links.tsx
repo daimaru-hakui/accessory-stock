@@ -27,7 +27,7 @@ export const sidebarLinks = [
   },
   {
     path: "/dashboard/incoming",
-    name: "入庫履歴",
+    name: "入荷履歴",
     icon: <RiIndentIncrease />,
   },
   {

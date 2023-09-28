@@ -7,7 +7,8 @@ type Props = {
   placeholder?: string;
   size?: "xs" | "sm" | "md" | "lg";
   className?: string;
-  value?: string;
+  value?: string | number;
+  defaultValue?: string | number;
   required?: boolean;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   register?: any;
@@ -21,6 +22,7 @@ const Input: FC<Props> = memo(
     size = "md",
     className,
     value,
+    defaultValue,
     required,
     onChange,
     register,
@@ -82,6 +84,7 @@ const Input: FC<Props> = memo(
           style={Style}
           className={`${className}`}
           value={value}
+          defaultValue={defaultValue}
           onChange={onChange}
           step="any"
           {...register}

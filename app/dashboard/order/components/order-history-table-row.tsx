@@ -1,5 +1,4 @@
 "use client";
-import Button from '@/components/ui/Button';
 import { Database } from '@/schema';
 import React, { FC } from 'react';
 import OrderConfirmModal from './order-confirm-modal';
@@ -70,7 +69,6 @@ const OrderHistoryTableRow: FC<Props> = ({ order }) => {
       <td className={`${TdStyle}`}>
         {order.comment}
       </td>
-
     </tr >
   );
 };

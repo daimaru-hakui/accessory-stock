@@ -1,16 +1,16 @@
-import Input from '@/components/ui/input';
-import { Database } from '@/schema';
-import { useStore } from '@/store';
-import React, { FC } from 'react';
-import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
+import Input from "@/components/ui/input";
+import { Database } from "@/schema";
+import { useStore } from "@/store";
+import React, { FC } from "react";
+import { Control, UseFormRegister, useFieldArray } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number; }[] | null;
-  suppliers: { id: string; supplier_name: string; } | null;
-  categories: { id: string; category_name: string; } | null;
+  skus: { id: string; stock: number }[] | null;
+  suppliers: { id: string; supplier_name: string } | null;
+  categories: { id: string; category_name: string } | null;
 }
 interface Props {
   product: ProductRow;
@@ -28,22 +28,28 @@ type Inputs = {
     skuId: string;
     stock: number;
     quantity: number;
+    price: number;
+    comment:string;
   }[];
 };
 
-const OrderTableRow: FC<Props> = ({ product, register, control, idx, stockPlaceId }) => {
+const OrderTableRow: FC<Props> = ({
+  product,
+  register,
+  control,
+  idx,
+  stockPlaceId
+}) => {
   const checkedProducts = useStore((state) => state.checkedProducts);
   const setCheckedProducts = useStore((state) => state.setCheckedProducts);
   const removeCheckedList = useStore((state) => state.removeCheckedList);
 
   const handleCheckedClose = (idx: number) => {
-    const newProducts = checkedProducts.filter((_, index: number) => (
-      index !== idx
-    ));
+    const newProducts = checkedProducts.filter(
+      (_, index: number) => index !== idx
+    );
     setCheckedProducts(newProducts);
-    const newList = newProducts.map((product) => (
-      product.id
-    ));
+    const newList = newProducts.map((product) => product.id);
     removeCheckedList(newList);
     remove(idx);
   };
@@ -53,12 +59,12 @@ const OrderTableRow: FC<Props> = ({ product, register, control, idx, stockPlaceI
     name: "contents",
   });
 
-  const TdStyle = "p-1 px-3 ";
+  const TdStyle = "p-1 px-3 text-sm ";
 
   return (
     <tr key={product.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
-        <input
+      <input
           style={{ display: "none" }}
           value={product.id}
           {...register(`contents.${idx}.productId`)}
@@ -87,21 +93,52 @@ const OrderTableRow: FC<Props> = ({ product, register, control, idx, stockPlaceI
       <td className={`${TdStyle}`}>{product.categories?.category_name}</td>
       <td className={`${TdStyle}`}>{product.suppliers?.supplier_name}</td>
       <td className={`${TdStyle} text-right`}>{product.price}</td>
+      <td className={`${TdStyle}`}>
+        <Input
+          type="number"
+          className="w-24"
+          required={true}
+          defaultValue={product.price}
+          register={{
+            ...register(`contents.${idx}.price`, {
+              required: true,
+              min: 0.01,
+            }),
+          }}
+        />
+      </td>
       <td className={`${TdStyle} text-right`}>
         {product.skus && product?.skus[0]?.stock ? product?.skus[0]?.stock : 0}
       </td>
       <td className={`${TdStyle}`}>
         <Input
           type="number"
-          className="w-32"
+          className="w-24"
           required={true}
-          register={{ ...register(`contents.${idx}.quantity`, { required: true, min: 0.01 }) }}
+          register={{
+            ...register(`contents.${idx}.quantity`, {
+              required: true,
+              min: 0.01,
+            }),
+          }}
+          defaultValue={0}
+        />
+      </td>
+      <td className={`${TdStyle}`}>
+        <Input
+          className="w-64"
+          required={true}
+          register={{
+            ...register(`contents.${idx}.comment`),
+          }}
         />
       </td>
       <td>
         <div className="flex justify-center">
-          <AiOutlineClose className="cursor-pointer"
-            onClick={() => handleCheckedClose(idx)} />
+          <AiOutlineClose
+            className="cursor-pointer"
+            onClick={() => handleCheckedClose(idx)}
+          />
         </div>
       </td>
     </tr>

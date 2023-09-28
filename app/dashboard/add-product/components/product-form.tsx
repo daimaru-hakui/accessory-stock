@@ -21,6 +21,19 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
   const stockPlaces = useStore((state) => state.stockPlaces);
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const validate = (data: EditedProduct) => {
+    const result =
+      defaultValues.supplier_id === data.supplier_id &&
+      defaultValues.product_number === data.product_number &&
+      defaultValues.product_name === data.product_name &&
+      defaultValues.color_number === data.color_number &&
+      defaultValues.color_name === data.color_name &&
+      defaultValues.size === data.size
+        ? true
+        : false;
+    return result;
+  };
+
   const {
     register,
     handleSubmit,
@@ -42,6 +55,11 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
   };
 
   const addProduct = async (data: EditedProduct) => {
+    const result = validate(data);
+    if (result) {
+      alert("すでに登録されています");
+      return;
+    }
     const { data: product, error } = await supabase
       .from("products")
       .insert({
@@ -55,6 +73,7 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
         color_name: data.color_name.trim(),
         supplier_id: data.supplier_id,
         lot_number: "",
+        comment: data.comment,
       })
       .select("*")
       .single();
@@ -72,7 +91,7 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
         });
       });
     }
-
+    alert("登録しました");
     router.refresh();
     reset();
   };
@@ -91,6 +110,7 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
         color_name: data.color_name.trim(),
         supplier_id: data.supplier_id,
         lot_number: "",
+        comment: data.comment,
       })
       .eq("id", id);
     if (error) {
@@ -212,10 +232,9 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
           </div>
         </div>
         <div>
+          <div className="text-xs font-bold">コメント</div>
           <textarea
-            style={{ border: "1px solid #ddd" }}
-            className="w-full"
-            required={true}
+            className="mt-1 p-2 w-full border border-zinc-300	rounded-md"
             {...register("comment")}
           />
         </div>

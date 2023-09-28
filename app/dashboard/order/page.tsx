@@ -19,8 +19,6 @@ const OrderIndex: NextPage = async () => {
 
   if (!data) return;
 
-  console.log("incoming", data);
-
   return (
     <div className="w-full">
       <h1 className="font-bold text-lg">入荷予定</h1>

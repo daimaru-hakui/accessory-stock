@@ -54,7 +54,7 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
     >
       <Sidebar />
       <DrawerSidebar/>
-      <main className="">
+      <main className="overflow-hidden">
         <Navbar />
         <div className="px-6 py-3">{children}</div>
       </main>

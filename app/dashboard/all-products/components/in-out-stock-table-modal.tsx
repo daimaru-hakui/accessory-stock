@@ -8,25 +8,30 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import InOutStockTableRow from "./in-out-stock-table-row";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import Input from "@/components/ui/input";
+import { format } from "date-fns";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number; }[] | null;
-  suppliers: { id: string; supplier_name: string; } | null;
-  categories: { id: string; category_name: string; } | null;
+  skus: { id: string; stock: number }[] | null;
+  suppliers: { id: string; supplier_name: string } | null;
+  categories: { id: string; category_name: string } | null;
 }
 interface Props {
   pageType: "IN" | "OUT";
 }
 
 type Inputs = {
+  outgoingDate: string;
   contents: {
     productId: string;
     skuId: string;
     stock: number;
     quantity: number;
     arrivalDate: string;
+    comment: string;
+    orderDate: string;
   }[];
 };
 
@@ -38,6 +43,9 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
   const supabase = createClientComponentClient<Database>();
   const stockPlaces = useStore((state) => state.stockPlaces);
   const [stockPlaceId, setStockPlaceId] = useState<number>(0);
+  const now = new Date();
+  const today = format(now, "yyyy-MM-dd");
+  
   const {
     register,
     handleSubmit,
@@ -78,12 +86,17 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
       product_id: content.productId,
       quantity: Number(content.quantity),
       create_user: null,
-      incoming_date_time: content.arrivalDate,
-      stock_place_id: stockPlaceId
+      incoming_date: content.arrivalDate,
+      stock_place_id: stockPlaceId,
+      comment: content.comment,
+      order_date: content.orderDate,
     }));
+
     console.log(newData);
     console.log(supabase.auth.getUser());
-    const { data: incoming, error } = await supabase.from("incoming_details").insert(newData);
+    const { data: incoming, error } = await supabase
+      .from("incoming_details")
+      .insert(newData);
     console.log("error", error);
   };
 
@@ -103,12 +116,15 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
       product_id: content.productId,
       quantity: Number(content.quantity),
       create_user: null,
-      outgoing_date_time: content.arrivalDate,
-      stock_place_id: stockPlaceId
+      outgoing_date: data.outgoingDate,
+      stock_place_id: stockPlaceId,
+      comment: content.comment,
     }));
     console.log(newData);
     console.log(supabase.auth.getUser());
-    const { data: outgoing, error } = await supabase.from("outgoing_details").insert(newData);
+    const { data: outgoing, error } = await supabase
+      .from("outgoing_details")
+      .insert(newData);
     console.log("error", error);
   };
 
@@ -130,17 +146,31 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
         closeButton={false}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Select
-            label={pageType === "IN" ? "入庫場所" : "出庫場所"}
-            className="min-w-[calc(150px)]"
-            onChange={(e) => setStockPlaceId(e.target.value)}
-          >
-            {stockPlaces.map((place) => (
-              <option key={place.id} value={place.id}>
-                {place.stock_place_name}
-              </option>
-            ))}
-          </Select>
+          <div className="flex gap-3">
+            <div>
+              <Select
+                label={pageType === "IN" ? "入庫場所" : "出庫場所"}
+                className="min-w-[calc(150px)]"
+                onChange={(e) => setStockPlaceId(e.target.value)}
+              >
+                {stockPlaces.map((place) => (
+                  <option key={place.id} value={place.id}>
+                    {place.stock_place_name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <Input
+                label="出庫日"
+                type="date"
+                defaultValue={today}
+                register={{
+                  ...register("outgoingDate", { required: true }),
+                }}
+              />
+            </div>
+          </div>
           <table className="w-full mt-3">
             <thead className="text-left text-xs">
               <tr className="border-b h-12">
@@ -152,9 +182,7 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
                 <th className={`${ThStyle}`}>価格</th>
                 <th className={`${ThStyle} text-right`}>徳島在庫</th>
                 <th className={`${ThStyle}`}>数量</th>
-                <th className={`${ThStyle}`}>
-                  {pageType === "IN" ? "入荷日" : "出荷日"}
-                </th>
+                <th className={`${ThStyle}`}>コメント</th>
                 <th className={`${ThStyle} text-center`}>アクション</th>
               </tr>
             </thead>

@@ -33,7 +33,13 @@ const IncomingTableRow: FC<Props> = ({ incomingDetail }) => {
   return (
     <tr key={incomingDetail.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
-        {incomingDetail.incoming_date_time}
+        {incomingDetail.order_number}
+      </td>
+      <td className={`${TdStyle}`}>
+        {incomingDetail.order_date}
+      </td>
+      <td className={`${TdStyle}`}>
+        {incomingDetail.incoming_date}
       </td>
       <td className={`${TdStyle}`}>
         {incomingDetail.products?.use_type === "READY" ? "既成" : "別注"}
@@ -60,6 +66,9 @@ const IncomingTableRow: FC<Props> = ({ incomingDetail }) => {
       </td>
       <td className={`${TdStyle} text-right`}>
         {incomingDetail.quantity}
+      </td>
+      <td className={`${TdStyle} text-right`}>
+        {incomingDetail.comment}
       </td>
 
     </tr >
