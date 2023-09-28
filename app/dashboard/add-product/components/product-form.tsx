@@ -21,23 +21,10 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
   const stockPlaces = useStore((state) => state.stockPlaces);
   const router = useRouter();
   const supabase = createClientComponentClient();
-  const validate = (data: EditedProduct) => {
-    const result =
-      defaultValues.supplier_id === data.supplier_id &&
-      defaultValues.product_number === data.product_number &&
-      defaultValues.product_name === data.product_name &&
-      defaultValues.color_number === data.color_number &&
-      defaultValues.color_name === data.color_name &&
-      defaultValues.size === data.size
-        ? true
-        : false;
-    return result;
-  };
 
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors },
   } = useForm<EditedProduct>({
@@ -55,11 +42,11 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
   };
 
   const addProduct = async (data: EditedProduct) => {
-    const result = validate(data);
-    if (result) {
+    const result = await doubleCheck(data);
+    if (!result) {
       alert("すでに登録されています");
       return;
-    }
+    };
     const { data: product, error } = await supabase
       .from("products")
       .insert({
@@ -67,10 +54,10 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
         category_id: data.category_id,
         product_number: data.product_number.trim(),
         product_name: data.product_name.trim(),
-        size: data.size.trim(),
-        price: Number(data.price),
         color_number: data.color_number.trim(),
         color_name: data.color_name.trim(),
+        size: data.size.trim(),
+        price: Number(data.price),
         supplier_id: data.supplier_id,
         lot_number: "",
         comment: data.comment,
@@ -94,6 +81,23 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
     alert("登録しました");
     router.refresh();
     reset();
+  };
+
+  const doubleCheck = async (data: EditedProduct) => {
+    const { data: validateData, error } = await supabase
+      .from("products")
+      .select("id")
+      .eq("product_number", data.product_number)
+      .eq("product_name", data.product_name.trim())
+      .eq("color_number", data.color_number.trim())
+      .eq("color_name", data.color_name.trim())
+      .eq("size", data.size.trim())
+      .eq("supplier_id", data.supplier_id)
+      .is('deleted_at', null);
+    if (validateData === null ||
+      validateData === undefined ||
+      validateData?.length > 0) return false;
+    return true;
   };
 
   const updateProduct = async (data: EditedProduct, id: string) => {

@@ -3,7 +3,7 @@ import { Database } from '@/schema';
 import React, { FC } from 'react';
 import OrderConfirmModal from './order-confirm-modal';
 
-type OrderHistory = Database["public"]["Tables"]["order_histories"]["Row"];
+type OrderDetails = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type StockPlace = Database["public"]["Tables"]["stock_places"]["Row"];
 type Category = Database["public"]["Tables"]["categories"]["Row"];
@@ -14,7 +14,7 @@ interface ProductRow extends Product {
   suppliers: Supplier | null;
 }
 
-interface Order extends OrderHistory {
+interface Order extends OrderDetails {
   products: ProductRow | null;
   stock_places: StockPlace | null;
 }
@@ -32,7 +32,7 @@ const OrderHistoryTableRow: FC<Props> = ({ order }) => {
         <OrderConfirmModal order={order} />
       </td>
       <td className={`${TdStyle}`}>
-        {order.id}
+        {order.order_id}
       </td>
       <td className={`${TdStyle}`}>
         {order.order_date}

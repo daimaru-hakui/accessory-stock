@@ -8,7 +8,7 @@ import OrderHistoryTable from './components/order-history-table';
 const OrderIndex: NextPage = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
-    .from("order_histories")
+    .from("order_details")
     .select(`*,products(*,categories(*),suppliers(*)),stock_places(*)`)
     .order("id", { ascending: false });
 

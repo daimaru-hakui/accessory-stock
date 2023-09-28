@@ -2,7 +2,7 @@ import { Database } from "@/schema";
 import React, { FC } from "react";
 import OrderHistoryTableRow from "./order-history-table-row";
 
-type OrderHistory = Database["public"]["Tables"]["order_histories"]["Row"];
+type OrderDetails = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type StockPlace = Database["public"]["Tables"]["stock_places"]["Row"];
 type Category = Database["public"]["Tables"]["categories"]["Row"];
@@ -13,7 +13,7 @@ interface Products extends Product {
   suppliers: Supplier | null;
 }
 
-interface Order extends OrderHistory {
+interface Order extends OrderDetails {
   products: Products | null;
   stock_places: StockPlace | null;
 }

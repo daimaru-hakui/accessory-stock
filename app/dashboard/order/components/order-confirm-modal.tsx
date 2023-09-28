@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React, { FC, useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-type OrderHistory = Database["public"]["Tables"]["order_histories"]["Row"];
+type OrderDetails = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type StockPlace = Database["public"]["Tables"]["stock_places"]["Row"];
 type Category = Database["public"]["Tables"]["categories"]["Row"];
@@ -19,7 +19,7 @@ interface ProductRow extends Product {
   suppliers: Supplier | null;
 }
 
-interface Order extends OrderHistory {
+interface Order extends OrderDetails {
   products: ProductRow | null;
   stock_places: StockPlace | null;
 }
@@ -90,7 +90,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
       .from("incoming_details")
       .insert({
         product_id: order.product_id,
-        order_number: data.id,
+        order_number: order.order_id,
         order_date: order.order_date,
         incoming_date: data.availabilityDate,
         quantity: Number(data.quantity),
@@ -103,7 +103,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
 
   const updateOrderHistory = async (data: Inputs) => {
     const { data: order, error } = await supabase
-      .from("order_histories")
+      .from("order_details")
       .update({
         quantity: Number(data.remainingQuantity),
       })
