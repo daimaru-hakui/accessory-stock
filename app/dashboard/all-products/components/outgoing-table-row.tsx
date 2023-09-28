@@ -21,19 +21,19 @@ interface Props {
 }
 
 type Inputs = {
-  outgoingDate:string;
+  outgoingDate: string;
   contents: {
     productId: string;
     skuId: string;
     stock: number;
     quantity: number;
     arrivalDate: string;
-    orderDate:string;
-    comment:string;
+    orderDate: string;
+    comment: string;
   }[];
 };
 
-const InOutStockTableRow: FC<Props> = ({ product, register, control, idx, stockPlaceId }) => {
+const OutgoingTableRow: FC<Props> = ({ product, register, control, idx, stockPlaceId }) => {
   const checkedProducts = useStore((state) => state.checkedProducts);
   const setCheckedProducts = useStore((state) => state.setCheckedProducts);
   const removeCheckedList = useStore((state) => state.removeCheckedList);
@@ -116,4 +116,4 @@ const InOutStockTableRow: FC<Props> = ({ product, register, control, idx, stockP
   );
 };
 
-export default InOutStockTableRow;
+export default OutgoingTableRow;

@@ -5,22 +5,11 @@ import { Database } from "@/schema";
 import { useStore } from "@/store";
 import React, { useState, FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import InOutStockTableRow from "./in-out-stock-table-row";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import Input from "@/components/ui/input";
 import { format } from "date-fns";
-
-type Product = Database["public"]["Tables"]["products"]["Row"];
-
-interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
-}
-interface Props {
-  pageType: "IN" | "OUT";
-}
+import OutgoingTableRow from "./outgoing-table-row";
 
 type Inputs = {
   outgoingDate: string;
@@ -35,7 +24,7 @@ type Inputs = {
   }[];
 };
 
-const InOutStockTableModal: FC<Props> = ({ pageType }) => {
+const OutgoingTableModal: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const session = useStore((state) => state.session);
@@ -45,7 +34,7 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
   const [stockPlaceId, setStockPlaceId] = useState<number>(0);
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
-  
+
   const {
     register,
     handleSubmit,
@@ -53,51 +42,13 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
     control,
     formState: { errors },
   } = useForm<Inputs>();
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data);
-    switch (pageType) {
-      case "IN":
-        await incomingUpdateStock(data);
-        await incomingAddDetail(data);
-        break;
-      case "OUT":
-        await outgoingUpdateStock(data);
-        await outgoingAddDetail(data);
-        break;
-    }
+    await outgoingUpdateStock(data);
+    await outgoingAddDetail(data);
     reset();
     setIsOpen(false);
     router.refresh();
-  };
-
-  const incomingUpdateStock = async (data: Inputs) => {
-    data.contents.forEach(async (content) => {
-      await supabase
-        .from("skus")
-        .update({
-          stock: Number(content.stock) + (Number(content.quantity) || 0),
-        })
-        .eq("id", content.skuId);
-    });
-  };
-
-  const incomingAddDetail = async (data: Inputs) => {
-    const newData = data.contents.map((content) => ({
-      product_id: content.productId,
-      quantity: Number(content.quantity),
-      create_user: null,
-      incoming_date: content.arrivalDate,
-      stock_place_id: stockPlaceId,
-      comment: content.comment,
-      order_date: content.orderDate,
-    }));
-
-    console.log(newData);
-    console.log(supabase.auth.getUser());
-    const { data: incoming, error } = await supabase
-      .from("incoming_details")
-      .insert(newData);
-    console.log("error", error);
   };
 
   const outgoingUpdateStock = async (data: Inputs) => {
@@ -120,8 +71,6 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
       stock_place_id: stockPlaceId,
       comment: content.comment,
     }));
-    console.log(newData);
-    console.log(supabase.auth.getUser());
     const { data: outgoing, error } = await supabase
       .from("outgoing_details")
       .insert(newData);
@@ -133,14 +82,14 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
   return (
     <>
       <Button
-        colorScheme={pageType === "IN" ? "green" : "orange"}
+        colorScheme="orange"
         className="cursor-pointer"
         onClick={() => setIsOpen(true)}
       >
-        {pageType === "IN" ? "入庫" : "出庫"}
+        出庫
       </Button>
       <Modal
-        title={pageType === "IN" ? "入庫" : "出庫"}
+        title="出庫"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         closeButton={false}
@@ -149,7 +98,7 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
           <div className="flex gap-3">
             <div>
               <Select
-                label={pageType === "IN" ? "入庫場所" : "出庫場所"}
+                label="出庫場所"
                 className="min-w-[calc(150px)]"
                 onChange={(e) => setStockPlaceId(e.target.value)}
               >
@@ -188,7 +137,7 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
             </thead>
             <tbody>
               {checkedProducts.map((product, idx) => (
-                <InOutStockTableRow
+                <OutgoingTableRow
                   key={product.id}
                   product={product}
                   stockPlaceId={stockPlaceId}
@@ -218,4 +167,4 @@ const InOutStockTableModal: FC<Props> = ({ pageType }) => {
   );
 };
 
-export default InOutStockTableModal;
+export default OutgoingTableModal;

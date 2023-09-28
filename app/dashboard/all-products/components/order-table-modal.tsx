@@ -20,7 +20,7 @@ type Inputs = {
     stock: number;
     quantity: number;
     price: number;
-    comment:string;
+    comment: string;
   }[];
 };
 
@@ -44,25 +44,38 @@ const OrderTableModal: FC = () => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    addOrder(data);
+    const id = await addOrderId();
+    if (!id) return;
+    await addOrderDetails(data, id);
     reset();
     setIsOpen(false);
     router.refresh();
   };
 
-  const addOrder = async (data: Inputs) => {
+  const addOrderId = async () => {
+    const { data: order, error } = await supabase
+      .from("order_histories")
+      .insert({
+        create_user: null,
+      }).select("id").single();
+    console.log("error", error);
+    if (!order) return;
+    return order.id;
+  };
+
+  const addOrderDetails = async (data: Inputs, id: number) => {
     const newData = data.contents.map((content) => ({
+      order_id: id,
       product_id: content.productId,
       quantity: Number(content.quantity),
       create_user: null,
       order_date: data.orderDate,
       availability_date: data.availabilityDate,
       stock_place_id: stockPlaceId,
-      comment:content.comment
+      comment: content.comment
     }));
-    console.log(supabase.auth.getUser());
     const { data: order, error } = await supabase
-      .from("order_histories")
+      .from("order_details")
       .insert(newData);
     console.log("error", error);
   };

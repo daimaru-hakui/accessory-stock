@@ -14,9 +14,9 @@ import format from "date-fns/format";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 
 interface Props {
@@ -51,16 +51,30 @@ const OrderModal: FC<Props> = ({ product }) => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    addOrder(data);
+    const id = await addOrderId();
+    if (!id) return;
+    await addOrderDetail(data, id);
     reset();
     setIsOpen(false);
     router.refresh();
   };
 
-  const addOrder = async (data: Inputs) => {
+  const addOrderId = async () => {
     const { data: order, error } = await supabase
       .from("order_histories")
       .insert({
+        create_user: null,
+      }).select("id").single();
+    console.log("error", error);
+    if (!order) return;
+    return order.id;
+  };
+
+  const addOrderDetail = async (data: Inputs, id: number) => {
+    const { data: order, error } = await supabase
+      .from("order_details")
+      .insert({
+        order_id: id,
         product_id: product.id,
         create_user: null,
         price: Number(data.price),
