@@ -52,9 +52,7 @@ const AllProductsTableRow: FC<Props> = React.memo(
       if (e.target.checked === true) {
         setCheckedList([e.target.name]);
       } else {
-        removeCheckedList(
-          checkedList.filter((check: string) => check !== e.target.name)
-        );
+        removeCheckedList(e.target.name);
       }
     };
 

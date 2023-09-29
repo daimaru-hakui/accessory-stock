@@ -1,6 +1,8 @@
+"use client"
 import { Database } from "@/schema";
 import React, { FC } from "react";
 import OrderHistoryTableRow from "./order-history-table-row";
+import { useStore } from "@/store";
 
 type OrderDetails = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -23,6 +25,10 @@ interface Props {
 }
 
 const OrderHistoryTable: FC<Props> = ({ orders }) => {
+  const checkedList = useStore((state)=>state.checkedList)
+  const setCheckedList = useStore((state)=>state.setCheckedList)
+  const removeCheckedList = useStore((state)=>state.removeCheckedList)
+  console.log(checkedList)
   const ThStyle = "p-1";
 
   return (
@@ -47,7 +53,11 @@ const OrderHistoryTable: FC<Props> = ({ orders }) => {
         </thead>
         <tbody className="text-sm">
           {orders?.map((order) => (
-            <OrderHistoryTableRow key={order.id} order={order} />
+            <OrderHistoryTableRow 
+            key={order.id} 
+            order={order} 
+            setCheckedList={setCheckedList} 
+            removeCheckedList={removeCheckedList}/>
           ))}
         </tbody>
       </table>

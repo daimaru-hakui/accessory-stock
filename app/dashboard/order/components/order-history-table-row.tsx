@@ -1,7 +1,8 @@
 "use client";
-import { Database } from '@/schema';
-import React, { FC } from 'react';
-import OrderConfirmModal from './order-confirm-modal';
+import { Database } from "@/schema";
+import React, { FC ,useRef} from "react";
+import OrderConfirmModal from "./order-confirm-modal";
+import { useStore } from "@/store";
 
 type OrderDetails = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -21,25 +22,39 @@ interface Order extends OrderDetails {
 
 interface Props {
   order: Order;
+  setCheckedList:(checked:string[])=>void
+  removeCheckedList:(checked:string)=>void
 }
 
-const OrderHistoryTableRow: FC<Props> = ({ order }) => {
+const OrderHistoryTableRow: FC<Props> = ({ order,setCheckedList,removeCheckedList }) => {
+  const inputRef = useRef(null)
 
+  const handleCheckInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked === true) {
+      setCheckedList([e.target.name]);
+    } else {
+      removeCheckedList(e.target.name)
+    }
+  };
+  
   const TdStyle = "p-1 px-3 ";
   return (
     <tr key={order.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
+        <input
+          ref={inputRef}
+          name={String(order.id)}
+          type="checkbox"
+          onChange={handleCheckInput}
+          className="cursor-pointer"
+        />
+      </td>
+      <td className={`${TdStyle}`}>
         <OrderConfirmModal order={order} />
       </td>
-      <td className={`${TdStyle}`}>
-        {order.order_id}
-      </td>
-      <td className={`${TdStyle}`}>
-        {order.order_date}
-      </td>
-      <td className={`${TdStyle}`}>
-        {order.availability_date}
-      </td>
+      <td className={`${TdStyle}`}>{order.order_id}</td>
+      <td className={`${TdStyle}`}>{order.order_date}</td>
+      <td className={`${TdStyle}`}>{order.availability_date}</td>
       <td className={`${TdStyle}`}>
         {order.products?.use_type === "READY" ? "既成" : "別注"}
       </td>
@@ -51,26 +66,18 @@ const OrderHistoryTableRow: FC<Props> = ({ order }) => {
         <div>{order.products?.color_number}</div>
         <div>{order.products?.color_name}</div>
       </td>
-      <td className={`${TdStyle}`}>
-        {order.products?.size}
-      </td>
+      <td className={`${TdStyle}`}>{order.products?.size}</td>
       <td className={`${TdStyle}`}>
         {order.products?.categories?.category_name}
       </td>
       <td className={`${TdStyle}`}>
         {order.products?.suppliers?.supplier_name}
       </td>
-      <td className={`${TdStyle} text-right`}>
-        {order.products?.price}
-      </td>
-      <td className={`${TdStyle} text-right`}>
-        {order.quantity}
-      </td>
-      <td className={`${TdStyle}`}>
-        {order.comment}
-      </td>
-    </tr >
+      <td className={`${TdStyle} text-right`}>{order.products?.price}</td>
+      <td className={`${TdStyle} text-right`}>{order.quantity}</td>
+      <td className={`${TdStyle}`}>{order.comment}</td>
+    </tr>
   );
 };
 
-export default OrderHistoryTableRow;
+export default React.memo(OrderHistoryTableRow);

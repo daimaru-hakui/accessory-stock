@@ -108,6 +108,10 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
         quantity: Number(data.remainingQuantity),
       })
       .eq("id", data.id);
+    if (error) {
+      console.log(error);
+      return;
+    }
   };
 
   const updateSku = async (data: Inputs) => {
@@ -118,7 +122,10 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
       })
       .eq("product_id", order.product_id)
       .eq("stock_place_id", order.stock_place_id);
-    console.log(error);
+    if (error) {
+      console.log(error);
+      return;
+    }
   };
 
   return (
