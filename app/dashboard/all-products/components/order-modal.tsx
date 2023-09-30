@@ -37,6 +37,7 @@ const OrderModal: FC<Props> = ({ product }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const supabase = createClientComponentClient<Database>();
+  const session = useStore((state) => state.session);
   const stockPlaces = useStore((state) => state.stockPlaces);
   const [stockPlaceId, setStockPlaceId] = useState<number>(0);
   const now = new Date();
@@ -61,11 +62,14 @@ const OrderModal: FC<Props> = ({ product }) => {
 
   const addOrderId = async () => {
     const { data: order, error } = await supabase
-      .from("order_histories")
+      .from("orders")
       .insert({
-        create_user: null,
+        create_user: session?.user.id || "",
       }).select("id").single();
-    console.log("error", error);
+    if (error) {
+      console.log(error);
+      return;
+    }
     if (!order) return;
     return order.id;
   };
@@ -76,7 +80,7 @@ const OrderModal: FC<Props> = ({ product }) => {
       .insert({
         order_id: id,
         product_id: product.id,
-        create_user: null,
+        create_user: session?.user.id || "",
         price: Number(data.price),
         quantity: Number(data.quantity),
         order_date: data.orderDate,
@@ -84,7 +88,10 @@ const OrderModal: FC<Props> = ({ product }) => {
         comment: data.comment,
         stock_place_id: stockPlaceId,
       });
-    console.log("error", error);
+    if (error) {
+      console.log(error);
+      return;
+    }
   };
 
   return (

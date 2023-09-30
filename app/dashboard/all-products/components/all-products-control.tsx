@@ -16,10 +16,10 @@ interface ProductRow extends Product {
 }
 
 interface Props {
-  setCheck: React.Dispatch<SetStateAction<"ADD" | "REMOVE" | "NONE">>;
+  setAllCheck: React.Dispatch<SetStateAction<"ADD" | "REMOVE" | null>>;
 }
 
-const AllProductsControl: FC<Props> = ({ setCheck }) => {
+const AllProductsControl: FC<Props> = ({ setAllCheck }) => {
   const checkedProducts = useStore((state) => state.checkedProducts);
   const checkedList = useStore((state) => state.checkedList);
   const resetCheckedList = useStore((state) => state.resetCheckedList);
@@ -43,7 +43,7 @@ const AllProductsControl: FC<Props> = ({ setCheck }) => {
       }
     });
     resetCheckedList();
-    setCheck("REMOVE");
+    setAllCheck("REMOVE");
     router.refresh();
   };
 

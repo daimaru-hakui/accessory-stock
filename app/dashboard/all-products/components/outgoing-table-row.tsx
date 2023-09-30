@@ -43,10 +43,9 @@ const OutgoingTableRow: FC<Props> = ({ product, register, control, idx, stockPla
       index !== idx
     ));
     setCheckedProducts(newProducts);
-    const newList = newProducts.map((product) => (
-      product.id
-    ));
-    removeCheckedList(newList);
+    const product = checkedProducts.find((_, index) => (index === idx));
+    if (!product) return;
+    removeCheckedList(product.id);
     remove(idx);
   };
 

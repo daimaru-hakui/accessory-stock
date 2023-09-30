@@ -11,9 +11,22 @@ import DrawerSidebar from "@/components/drawer-sidebar";
 const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
   const supabase = createClientComponentClient();
   const isSidebar = useStore((state) => state.isSidebar);
+  const setSession = useStore((state) => state.setSession);
   const setSuppliers = useStore((state) => state.setSuppliers);
   const setCategories = useStore((state) => state.setCategories);
   const setStockPlaces = useStore((state) => state.setStockPlaces);
+
+  const getSession = useCallback(async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) return;
+    setSession(session);
+  }, [supabase, setSession]);
+
+  useEffect(() => {
+    getSession();
+  }, [getSession]);
 
   const getSuppliers = useCallback(async () => {
     const { data, error } = await supabase.from("suppliers").select("*");
@@ -49,14 +62,15 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
   return (
     <div
       style={{ transition: "0.2s" }}
-      className={`${isSidebar ? "dashboardLayout" : "dashboardLayoutNotSidebar"
-        }`}
+      className={`${isSidebar ? "dashboardLayout" : "dashboardLayoutNotSidebar"}`}
     >
       <Sidebar />
-      <DrawerSidebar/>
-      <main className="overflow-hidden">
+      <DrawerSidebar />
+      <main className={`grid content-start w-full`}>
         <Navbar />
-        <div className="px-6 py-3">{children}</div>
+        <div className="px-6 py-3 w-full overflow-hidden">
+          {children}
+        </div>
       </main>
     </div>
   );

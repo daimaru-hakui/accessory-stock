@@ -16,7 +16,8 @@
   }
 }
 
-.dashboardLayout ,.dashboardLayoutNotSidebar{
+.dashboardLayout,
+.dashboardLayoutNotSidebar {
   display: grid;
   grid-template-columns: 1fr;
 }
@@ -24,10 +25,13 @@
 @media (min-width:768px) {
   .dashboardLayout {
     display: grid;
+    width: 100vw;
     grid-template-columns: 250px 1fr;
   }
+
   .dashboardLayoutNotSidebar {
     display: grid;
     grid-template-columns: 0 1fr;
   }
+
 }

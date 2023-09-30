@@ -21,8 +21,13 @@ export const sidebarLinks = [
     icon: <FaTasks />,
   },
   {
-    path: "/dashboard/order",
+    path: "/dashboard/expected-arrivals",
     name: "入荷予定",
+    icon: <SlCalender />,
+  },
+  {
+    path: "/dashboard/order",
+    name: "発注履歴",
     icon: <SlCalender />,
   },
   {

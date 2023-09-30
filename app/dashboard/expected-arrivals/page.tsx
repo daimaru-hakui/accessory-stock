@@ -1,35 +1,36 @@
 import React from 'react';
-import IncomingTable from './components/incoming-table';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/schema';
 import { cookies } from "next/headers";
 import { NextPage } from 'next';
+import OrderHistoryTable from './components/expected_arrival-table';
 
-const Incoming: NextPage = async () => {
+const ExpectedArrivalPage: NextPage = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
-    .from("incoming_details")
-    .select(`*,order_details(*,products(*,categories(*),suppliers(*))),stock_places(*)`)
-    .order("created_at", { ascending: false })
-    .order("incoming_date", { ascending: false });
+    .from("order_details")
+    .select(`*,products(*,
+    categories(id,category_name),
+    suppliers(id,supplier_name),
+    skus(id,stock)),
+    stock_places(id,stock_place_name)`)
+    .gt("quantity",0)
+    .order("id", { ascending: false });
 
   if (error) {
     console.log(error);
     return;
   }
-
   if (!data) return;
-
-  console.log("incoming", data);
 
   return (
     <div className="w-full">
-      <h1 className="font-bold text-lg">入荷履歴</h1>
+      <h1 className="font-bold text-lg">入荷予定</h1>
       <div className="mt-3 flex justify-center items center">
-        <IncomingTable incomingDetails={data} />
+        <OrderHistoryTable orders={data} />
       </div>
     </div>
   );
 };
 
-export default Incoming;
+export default ExpectedArrivalPage;

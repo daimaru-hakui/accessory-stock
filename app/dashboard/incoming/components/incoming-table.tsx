@@ -3,24 +3,23 @@ import React, { FC } from "react";
 import IncomingTableRow from "./incoming-table-row";
 
 type IncomingDetail = Database["public"]["Tables"]["incoming_details"]["Row"];
-type OutgoingDetail = Database["public"]["Tables"]["outgoing_details"]["Row"];
+type OrderDetail = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type StockPlace = Database["public"]["Tables"]["stock_places"]["Row"];
 type Category = Database["public"]["Tables"]["categories"]["Row"];
 type Supplier = Database["public"]["Tables"]["suppliers"]["Row"];
 
-interface Products extends Product {
+interface ProductRow extends Product {
   categories: Category | null;
   suppliers: Supplier | null;
 }
 
-interface Incoming extends IncomingDetail {
-  products: Products | null;
-  stock_places: StockPlace | null;
+interface Order extends OrderDetail {
+  products: ProductRow | null;
 }
 
-interface Outgoing extends OutgoingDetail {
-  products: Products | null;
+interface Incoming extends IncomingDetail {
+  order_details: Order | null;
   stock_places: StockPlace | null;
 }
 

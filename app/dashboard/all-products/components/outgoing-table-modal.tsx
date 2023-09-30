@@ -66,7 +66,7 @@ const OutgoingTableModal: FC = () => {
     const newData = data.contents.map((content) => ({
       product_id: content.productId,
       quantity: Number(content.quantity),
-      create_user: null,
+      create_user: session?.user.id || "",
       outgoing_date: data.outgoingDate,
       stock_place_id: stockPlaceId,
       comment: content.comment,

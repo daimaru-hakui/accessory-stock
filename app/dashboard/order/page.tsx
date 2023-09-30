@@ -9,14 +9,17 @@ const OrderIndex: NextPage = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
     .from("order_details")
-    .select(`*,products(*,categories(*),suppliers(*)),stock_places(*)`)
+    .select(`*,products(*,
+    categories(id,category_name),
+    suppliers(id,supplier_name),
+    skus(id,stock)),
+    stock_places(id,stock_place_name)`)
     .order("id", { ascending: false });
 
   if (error) {
     console.log(error);
     return;
   }
-
   if (!data) return;
 
   return (

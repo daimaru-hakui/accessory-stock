@@ -8,9 +8,9 @@ import { AiOutlineClose } from "react-icons/ai";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 interface Props {
   product: ProductRow;
@@ -29,7 +29,7 @@ type Inputs = {
     stock: number;
     quantity: number;
     price: number;
-    comment:string;
+    comment: string;
   }[];
 };
 
@@ -49,8 +49,9 @@ const OrderTableRow: FC<Props> = ({
       (_, index: number) => index !== idx
     );
     setCheckedProducts(newProducts);
-    const newList = newProducts.map((product) => product.id);
-    removeCheckedList(newList);
+    const product = checkedProducts.find((_, index) => index === idx);
+    if (!product) return;
+    removeCheckedList(product.id);
     remove(idx);
   };
 
@@ -64,7 +65,7 @@ const OrderTableRow: FC<Props> = ({
   return (
     <tr key={product.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
-      <input
+        <input
           style={{ display: "none" }}
           value={product.id}
           {...register(`contents.${idx}.productId`)}
