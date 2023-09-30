@@ -78,29 +78,29 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data);
-    await addIncommingHistory(data);
+    // await addIncommingHistory(data);
     await updateOrderHistory(data);
     await updateSku(data);
     setIsOpen(false);
     router.refresh();
   };
 
-  const addIncommingHistory = async (data: Inputs) => {
-    if (!order) return;
-    const { data: incoming, error } = await supabase
-      .from("incoming_details")
-      .insert({
-        stock_place_id: order.stock_place_id,
-        product_id: order.product_id,
-        order_id: order.order_id,
-        order_date: order.order_date,
-        incoming_date: data.availabilityDate,
-        quantity: Number(data.quantity),
-        comment: data.comment,
-        create_user: session?.user.id || "",
-      });
-    console.log(error);
-  };
+  // const addIncommingHistory = async (data: Inputs) => {
+  //   if (!order) return;
+  //   const { data: incoming, error } = await supabase
+  //     .from("incoming_details")
+  //     .insert({
+  //       stock_place_id: order.stock_place_id,
+  //       product_id: order.product_id,
+  //       order_id: order.order_id,
+  //       order_date: order.order_date,
+  //       incoming_date: data.availabilityDate,
+  //       quantity: Number(data.quantity),
+  //       comment: data.comment,
+  //       create_user: session?.user.id || "",
+  //     });
+  //   console.log(error);
+  // };
 
   const updateOrderHistory = async (data: Inputs) => {
     const { data: order, error } = await supabase
