@@ -49,7 +49,7 @@ const OrderTableRow: FC<Props> = ({
       (_, index: number) => index !== idx
     );
     setCheckedProducts(newProducts);
-    const product = newProducts.find((_, index) => index === idx);
+    const product = checkedProducts.find((_, index) => index === idx);
     if (!product) return;
     removeCheckedList(product.id);
     remove(idx);

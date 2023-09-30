@@ -2,7 +2,7 @@ import { Database } from '@/schema';
 import React, { FC } from 'react';
 
 type IncomingDetail = Database["public"]["Tables"]["incoming_details"]["Row"];
-type OutgoingDetail = Database["public"]["Tables"]["outgoing_details"]["Row"];
+type OrderDetail = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type StockPlace = Database["public"]["Tables"]["stock_places"]["Row"];
 type Category = Database["public"]["Tables"]["categories"]["Row"];
@@ -13,13 +13,12 @@ interface ProductRow extends Product {
   suppliers: Supplier | null;
 }
 
-interface Incoming extends IncomingDetail {
+interface Order extends OrderDetail {
   products: ProductRow | null;
-  stock_places: StockPlace | null;
 }
 
-interface Outgoing extends OutgoingDetail {
-  products: ProductRow | null;
+interface Incoming extends IncomingDetail {
+  order_details: Order | null;
   stock_places: StockPlace | null;
 }
 
@@ -33,36 +32,36 @@ const IncomingTableRow: FC<Props> = ({ incomingDetail }) => {
   return (
     <tr key={incomingDetail.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
-        {incomingDetail.order_id}
+        {incomingDetail.order_details?.order_id}
       </td>
       <td className={`${TdStyle}`}>
-        {incomingDetail.order_date}
+        {incomingDetail.order_details?.order_date}
       </td>
       <td className={`${TdStyle}`}>
         {incomingDetail.incoming_date}
       </td>
       <td className={`${TdStyle}`}>
-        {incomingDetail.products?.use_type === "READY" ? "既成" : "別注"}
+        {incomingDetail.order_details?.products?.use_type === "READY" ? "既成" : "別注"}
       </td>
       <td className={`${TdStyle}`}>
-        <div>{incomingDetail.products?.product_number}</div>
-        <div>{incomingDetail.products?.product_name}</div>
+        <div>{incomingDetail.order_details?.products?.product_number}</div>
+        <div>{incomingDetail.order_details?.products?.product_name}</div>
       </td>
       <td className={`${TdStyle}`}>
-        <div>{incomingDetail.products?.color_number}</div>
-        <div>{incomingDetail.products?.color_name}</div>
+        <div>{incomingDetail.order_details?.products?.color_number}</div>
+        <div>{incomingDetail.order_details?.products?.color_name}</div>
       </td>
       <td className={`${TdStyle}`}>
-        {incomingDetail.products?.size}
+        {incomingDetail.order_details?.products?.size}
       </td>
       <td className={`${TdStyle}`}>
-        {incomingDetail.products?.categories?.category_name}
+        {incomingDetail.order_details?.products?.categories?.category_name}
       </td>
       <td className={`${TdStyle}`}>
-        {incomingDetail.products?.suppliers?.supplier_name}
+        {incomingDetail.order_details?.products?.suppliers?.supplier_name}
       </td>
       <td className={`${TdStyle} text-right`}>
-        {incomingDetail.products?.price}
+        {incomingDetail.price}
       </td>
       <td className={`${TdStyle} text-right`}>
         {incomingDetail.quantity}

@@ -2,56 +2,64 @@ import Input from "@/components/ui/input";
 import { Database } from "@/schema";
 import { useStore } from "@/store";
 import React, { FC } from "react";
-import { Control, UseFormRegister, useFieldArray } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
 
+type OrderDetail = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number; }[] | null;
-  suppliers: { id: string; supplier_name: string; } | null;
   categories: { id: string; category_name: string; } | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  skus: { id: string; stock: number; }[] | null;
 }
+
+interface Order extends OrderDetail {
+  products: ProductRow | null;
+  stock_places: { id: number; stock_place_name: string; } | null;
+}
+
 interface Props {
-  product: ProductRow;
-  register: UseFormRegister<Inputs>;
-  control: Control<Inputs>;
+  order: Order;
+  mothods: UseFormReturn<Inputs, any, undefined>;
   idx: number;
   stockPlaceId: number;
 }
 
 type Inputs = {
-  availabilityDate: string;
-  orderDate: string;
+  incomingDate: string;
+  stockPlace: number;
   contents: {
-    productId: string;
-    skuId: string;
-    stock: number;
-    quantity: number;
+    id: number;
     price: number;
+    quantity: number;
+    availabilityDate: string;
+    remainingQuantity: number;
     comment: string;
+    productId: string;
+    prevStock: number;
   }[];
 };
 
 const OrderConfirmTableRow: FC<Props> = ({
-  product,
-  register,
-  control,
+  order,
+  mothods,
   idx,
   stockPlaceId
 }) => {
-  const checkedProducts = useStore((state) => state.checkedProducts);
-  const setCheckedProducts = useStore((state) => state.setCheckedProducts);
+  const checkedOrders = useStore((state) => state.checkedOrders);
+  const setCheckedOrders = useStore((state) => state.setCheckedOrders);
   const removeCheckedList = useStore((state) => state.removeCheckedList);
+  const { register, control, watch, setValue } = mothods;
 
   const handleCheckedClose = (idx: number) => {
-    const newProducts = checkedProducts.filter(
+    const newOrders = checkedOrders.filter(
       (_, index: number) => index !== idx
     );
-    setCheckedProducts(newProducts);
-    const product = newProducts.find((_, index) => index === idx);
-    if (!product) return;
-    removeCheckedList(product.id);
+    setCheckedOrders(newOrders);
+    const order = checkedOrders.find((_, index) => index === idx);
+    if (!order) return;
+    removeCheckedList(String(order.id));
     remove(idx);
   };
 
@@ -60,46 +68,49 @@ const OrderConfirmTableRow: FC<Props> = ({
     name: "contents",
   });
 
+  const quantity =
+    (order.quantity - watch(`contents.${idx}.quantity`) >= 0 ?
+      order.quantity - watch(`contents.${idx}.quantity`) : 0
+    );
+  setValue(`contents.${idx}.remainingQuantity`, quantity);
+
   const TdStyle = "p-1 px-3 text-sm ";
 
   return (
-    <tr key={product.id} className="border-b h-12">
+    <tr key={order.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
         <input
           style={{ display: "none" }}
-          value={product.id}
+          value={order.id}
+          {...register(`contents.${idx}.id`)}
+        />
+        <input
+          style={{ display: "none" }}
+          defaultValue={order.product_id}
           {...register(`contents.${idx}.productId`)}
         />
         <input
           style={{ display: "none" }}
-          value={product.skus && product?.skus[0]?.id ? product?.skus[0]?.id : ""}
-          {...register(`contents.${idx}.skuId`)}
+          value={order.products?.skus ? order.products?.skus[stockPlaceId].stock : 0}
+          {...register(`contents.${idx}.prevStock`)}
         />
-        <input
-          style={{ display: "none" }}
-          value={product?.skus &&
-            product?.skus[stockPlaceId] ?
-            product?.skus[stockPlaceId].stock : 0
-          }
-          {...register(`contents.${idx}.stock`)}
-        />
-        <div>{product.product_number}</div>
-        <div>{product.product_name}</div>
+
+        <div>{order.products?.product_number}</div>
+        <div>{order.products?.product_name}</div>
       </td>
       <td className={`${TdStyle}`}>
-        <div>{product.color_number}</div>
-        <div>{product.color_name}</div>
+        <div>{order.products?.color_number}</div>
+        <div>{order.products?.color_name}</div>
       </td>
-      <td className={`${TdStyle} text-center`}>{product.size}</td>
-      <td className={`${TdStyle}`}>{product.categories?.category_name}</td>
-      <td className={`${TdStyle}`}>{product.suppliers?.supplier_name}</td>
-      <td className={`${TdStyle} text-right`}>{product.price}</td>
+      <td className={`${TdStyle} text-center`}>{order.products?.size}</td>
+      <td className={`${TdStyle}`}>{order.products?.categories?.category_name}</td>
+      <td className={`${TdStyle}`}>{order.products?.suppliers?.supplier_name}</td>
       <td className={`${TdStyle}`}>
         <Input
           type="number"
           className="w-24"
           required={true}
-          defaultValue={product.price}
+          defaultValue={order.price}
           register={{
             ...register(`contents.${idx}.price`, {
               required: true,
@@ -108,27 +119,38 @@ const OrderConfirmTableRow: FC<Props> = ({
           }}
         />
       </td>
-      <td className={`${TdStyle} text-right`}>
-        {product.skus && product?.skus[0]?.stock ? product?.skus[0]?.stock : 0}
-      </td>
+      <td className={`${TdStyle} w-24 pr-6 text-right`}>{order.quantity}</td>
       <td className={`${TdStyle}`}>
         <Input
           type="number"
           className="w-24"
           required={true}
+          defaultValue={order.quantity}
           register={{
             ...register(`contents.${idx}.quantity`, {
               required: true,
               min: 0.01,
             }),
           }}
+        />
+      </td>
+      <td className={`${TdStyle}`}>
+        <Input
+          type="number"
+          className="w-24"
+          required={true}
           defaultValue={0}
+          register={{
+            ...register(`contents.${idx}.remainingQuantity`, {
+              required: true,
+              min: 0,
+            }),
+          }}
         />
       </td>
       <td className={`${TdStyle}`}>
         <Input
           className="w-64"
-          required={true}
           register={{
             ...register(`contents.${idx}.comment`),
           }}

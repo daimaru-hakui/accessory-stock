@@ -38,8 +38,8 @@ type Store = {
   setCheckedOrders: (checkedOrders: Order[]) => void;
   checkedList: string[];
   setCheckedList: (checkedList: string[]) => void;
-  filterCheckedList: (checkedList: string[]) => void;
-  removeCheckedList: (checked: string) => void;
+  // filterCheckedList: (checkedList: string[]) => void;
+  removeCheckedList: (id: string) => void;
   resetCheckedList: () => void;
 };
 
@@ -61,10 +61,12 @@ export const useStore = create<Store>((set) => ({
   checkedList: [],
   setCheckedList: (checkedList) =>
     set((state) => ({ checkedList: [...state.checkedList, ...checkedList] })),
-  filterCheckedList: (checkedList) => set({ checkedList }),
-  removeCheckedList: (checked) => set((state)=> ( 
-    {checkedList: state.checkedList.filter((prevChecked)=>(
-      prevChecked !==  checked
-    ))})),
-  resetCheckedList: () => set({ checkedList: [] })
+  // filterCheckedList: (checkedList) => set({ checkedList }),
+  removeCheckedList: (checked) => set((state) => (
+    {
+      checkedList: state.checkedList.filter((prevChecked) => (
+        prevChecked !== checked
+      ))
+    })),
+  resetCheckedList: () => set({ checkedList: [] }),
 }));

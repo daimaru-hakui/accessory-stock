@@ -2,6 +2,7 @@
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/input";
 import Modal from "@/components/ui/modal";
+import Select from "@/components/ui/select";
 import { Database } from "@/schema";
 import { useStore } from "@/store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -31,7 +32,8 @@ type Inputs = {
   id: number;
   price: number;
   quantity: number;
-  availabilityDate: string;
+  stockPlace: number;
+  incomingDate: string;
   remainingQuantity: number;
   comment: string;
 };
@@ -40,6 +42,8 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [page, setPage] = useState(1);
   const initQuantity = order.quantity;
+  const stockPlaces = useStore((state) => state.stockPlaces);
+  const [stockPlaceId, setStockPlaceId] = useState<number>(order.stock_place_id);
   const [prevStock, setPrevStock] = useState(0);
   const supabase = createClientComponentClient<Database>();
   const session = useStore((state) => state.session);
@@ -47,20 +51,20 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
 
   useEffect(() => {
     const getSku = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("skus")
         .select("stock")
         .eq("product_id", order.product_id)
-        .eq("stock_place_id", order.stock_place_id)
+        .eq("stock_place_id", stockPlaceId)
         .single();
       if (!data) return;
+      if (error) {
+        console.log(error);
+      }
       setPrevStock(data.stock);
     };
     getSku();
-  }, [order, supabase]);
-
- 
-  console.log(order.quantity)
+  }, [order, supabase, stockPlaceId]);
 
   const {
     register,
@@ -72,16 +76,14 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
   } = useForm<Inputs>({
     defaultValues: {
       id: order.id,
-      price: order.products?.price,
+      price: order.price,
       quantity: order.quantity,
-      availabilityDate: order.availability_date,
+      incomingDate: order.availability_date,
       comment: order.comment,
     },
   });
 
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data);
     await addIncommingHistory(data);
     await updateOrderHistory(data);
     await updateSku(data);
@@ -94,16 +96,18 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
     const { data: incoming, error } = await supabase
       .from("incoming_details")
       .insert({
-        stock_place_id: order.stock_place_id,
-        product_id: order.product_id,
-        order_id: order.order_id,
-        order_date: order.order_date,
-        incoming_date: data.availabilityDate,
+        order_detail_id: order.id,
+        incoming_date: data.incomingDate,
         quantity: Number(data.quantity),
-        comment: data.comment,
+        price: data.price,
         create_user: session?.user.id || "",
+        comment: data.comment,
+        stock_place_id: stockPlaceId
       });
-    console.log(error);
+    if (error) {
+      console.log(error);
+      return;
+    }
   };
 
   const updateOrderHistory = async (data: Inputs) => {
@@ -117,7 +121,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
       console.log(error);
       return;
     }
-    setValue("quantity",Number(data.remainingQuantity))
+    setValue("quantity", Number(data.remainingQuantity));
   };
 
   const updateSku = async (data: Inputs) => {
@@ -127,7 +131,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
         stock: prevStock + Number(data.quantity),
       })
       .eq("product_id", order.product_id)
-      .eq("stock_place_id", order.stock_place_id);
+      .eq("stock_place_id", stockPlaceId).select("stock");
     if (error) {
       console.log(error);
       return;
@@ -190,6 +194,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
                       type="number"
                       className="w-full"
                       required={true}
+                      defaultValue={order.price}
                       register={{
                         ...register("price", { required: true, min: 0.01 }),
                       }}
@@ -198,11 +203,26 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
                 </div>
                 <div className="flex gap-3">
                   <div className="w-full">
+                    <Select
+                      label="入庫場所"
+                      className="w-full min-w-[calc(150px)]"
+                      onChange={(e) => setStockPlaceId(e.target.value)}
+                    >
+                      {stockPlaces.map((place) => (
+                        <option key={place.id} value={place.id}>
+                          {place.stock_place_name}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-full">
                     <Input
                       label="入荷日"
                       type="date"
                       className="w-full"
-                      register={{ ...register("availabilityDate") }}
+                      register={{ ...register("incomingDate") }}
                     />
                   </div>
                 </div>
@@ -294,4 +314,4 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
   );
 };
 
-export default OrderConfirmModal;
+export default React.memo(OrderConfirmModal)

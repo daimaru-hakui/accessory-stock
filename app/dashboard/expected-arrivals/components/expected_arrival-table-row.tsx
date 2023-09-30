@@ -2,7 +2,6 @@
 import { Database } from "@/schema";
 import React, { FC, useRef, useEffect } from "react";
 import OrderConfirmModal from "./order-confirm-modal";
-import { useStore } from "@/store";
 
 type OrderDetail = Database["public"]["Tables"]["order_details"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -24,21 +23,24 @@ interface Props {
   setAllCheck: React.Dispatch<React.SetStateAction<"ADD" | "REMOVE" | null>>;
   setCheckedList: (checked: string[]) => void;
   removeCheckedList: (checked: string) => void;
+  isCheckedListIncludes: (id: string) => boolean;
 }
 
 const ExpectedArrivalTableRow: FC<Props> = ({
   order,
   allCheck,
   setAllCheck,
-  setCheckedList, removeCheckedList
+  setCheckedList,
+  removeCheckedList,
+  isCheckedListIncludes
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleCheckInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked === true) {
-      setCheckedList([e.target.name]);
+      setCheckedList([e.target.value]);
     } else {
-      removeCheckedList(e.target.name);
+      removeCheckedList(e.target.value);
     }
   };
 
@@ -54,13 +56,20 @@ const ExpectedArrivalTableRow: FC<Props> = ({
     }
   }, [allCheck, order.id, setAllCheck, setCheckedList]);
 
+  useEffect(() => {
+    if (!inputRef.current) return;
+    const result = isCheckedListIncludes(String(order.id));
+    if (result) inputRef.current.checked = true;
+    if (!result) inputRef.current.checked = false;
+  }, [isCheckedListIncludes, order.id]);
+
   const TdStyle = "p-1 px-3 ";
   return (
     <tr key={order.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
         <input
           ref={inputRef}
-          name={String(order.id)}
+          value={String(order.id)}
           type="checkbox"
           onChange={handleCheckInput}
           className="cursor-pointer"
@@ -90,11 +99,11 @@ const ExpectedArrivalTableRow: FC<Props> = ({
       <td className={`${TdStyle}`}>
         {order.products?.suppliers?.supplier_name}
       </td>
-      <td className={`${TdStyle} text-right`}>{order.products?.price}</td>
+      <td className={`${TdStyle} text-right`}>{order.price}</td>
       <td className={`${TdStyle} text-right`}>{order.quantity}</td>
       <td className={`${TdStyle}`}>{order.comment}</td>
     </tr>
   );
 };
 
-export default React.memo(ExpectedArrivalTableRow);
+export default ExpectedArrivalTableRow;

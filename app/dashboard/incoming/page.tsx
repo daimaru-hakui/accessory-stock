@@ -9,7 +9,7 @@ const Incoming: NextPage = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
     .from("incoming_details")
-    .select(`*,products(*,categories(*),suppliers(*)),stock_places(*)`)
+    .select(`*,order_details(*,products(*,categories(*),suppliers(*))),stock_places(*)`)
     .order("created_at", { ascending: false })
     .order("incoming_date", { ascending: false });
 

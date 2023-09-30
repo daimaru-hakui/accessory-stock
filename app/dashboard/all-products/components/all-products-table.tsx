@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect ,useCallback} from "react";
 import AllProductsTableRow from "./all-products-table-row";
 import { Database } from "@/schema";
 import { useStore } from "@/store";
@@ -30,6 +30,10 @@ const AllProductsTable: FC<Props> = ({ products }) => {
       setAllCheck("REMOVE");
     }
   };
+
+  const isCheckedListIncludes = useCallback((id:string) => {
+    return checkedList.includes(id)
+  },[checkedList])
 
   useEffect(() => {
     const newProducts = checkedList.map((checkId) =>
@@ -87,6 +91,7 @@ const AllProductsTable: FC<Props> = ({ products }) => {
                 product={product}
                 allCheck={allCheck}
                 setAllCheck={setAllCheck}
+                isCheckedListIncludes={isCheckedListIncludes}
               />
             ))}
           </tbody>

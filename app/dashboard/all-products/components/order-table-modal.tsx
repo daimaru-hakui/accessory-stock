@@ -36,7 +36,6 @@ const OrderTableModal: FC = () => {
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
 
-  console.log(session);
   const {
     register,
     handleSubmit,
@@ -131,7 +130,7 @@ const OrderTableModal: FC = () => {
             </div>
             <div>
               <Input
-                label="入荷日"
+                label="入荷予定日"
                 type="date"
                 register={{
                   ...register("availabilityDate", { required: true }),

@@ -1,6 +1,6 @@
 "use client";
 import { Database } from "@/schema";
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect,useCallback } from "react";
 import OrderHistoryTableRow from "./expected_arrival-table-row";
 import { useStore } from "@/store";
 import ExpectedArrivalControl from "./expected-arrival-control";
@@ -30,7 +30,6 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
   const setCheckedList = useStore((state) => state.setCheckedList);
   const removeCheckedList = useStore((state) => state.removeCheckedList);
   const resetCheckedList = useStore((state) => state.resetCheckedList);
-  console.log(checkedList);
 
   const handleAllCheckedList = () => {
     if (checkedList.length === 0) {
@@ -41,16 +40,20 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
     }
   };
 
+  const isCheckedListIncludes = useCallback((id:string) => {
+    return checkedList.includes(id)
+  },[checkedList])
+
   useEffect(() => {
     resetCheckedList();
   }, [resetCheckedList]);
 
   useEffect(() => {
-    const newProducts = checkedList.map((checkId) =>
-      orders.find((order) => order.product_id === checkId)
-    );
+    const newOrders = checkedList.map((checkId) =>
+      orders.find((order) => String(order.id) === checkId)
+    )
     let array: Order[] = [];
-    newProducts.forEach((order) => {
+    newOrders.forEach((order) => {
       if (order !== undefined) {
         array.push(order);
       }
@@ -72,7 +75,7 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
                   checked={checkedList.length > 0 ? true : false}
                   onChange={handleAllCheckedList} />
               </th>
-              <th className={`${ThStyle}`}>アクション</th>
+              <th className={`${ThStyle}`}>確定処理</th>
               <th className={`${ThStyle}`}>発注No.</th>
               <th className={`${ThStyle}`}>発注日</th>
               <th className={`${ThStyle}`}>入荷予定日</th>
@@ -95,7 +98,9 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
                 allCheck={allCheck}
                 setAllCheck={setAllCheck}
                 setCheckedList={setCheckedList}
-                removeCheckedList={removeCheckedList} />
+                removeCheckedList={removeCheckedList}
+                isCheckedListIncludes={isCheckedListIncludes}
+              />
             ))}
           </tbody>
         </table>

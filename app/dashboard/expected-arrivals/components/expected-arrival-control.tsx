@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import OrderTableModal from "../../all-products/components/order-table-modal";
 import OutgoingTableModal from "../../all-products/components/outgoing-table-modal";
+import OrderConfirmTableModal from "./order-confirm-table-modal";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -28,7 +29,7 @@ const ExpectedArrivalControl: FC<Props> = ({ setAllCheck }) => {
       {checkedProducts && checkedList.length > 0 && (
         <div className="flex justify-between gap-3">
           <div className="flex gap-3">
-            <OrderTableModal />
+            <OrderConfirmTableModal />
           </div>
         </div>
       )}

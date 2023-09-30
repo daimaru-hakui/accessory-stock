@@ -13,15 +13,17 @@ import { format } from "date-fns";
 import OrderConfirmTableRow from "./order-confirm-table-row";
 
 type Inputs = {
-  availabilityDate: string;
-  orderDate: string;
+  incomingDate: string;
+  stockPlace: number;
   contents: {
-    productId: string;
-    skuId: string;
-    stock: number;
-    quantity: number;
+    id: number;
     price: number;
+    availabilityDate: string;
+    quantity: number;
+    remainingQuantity: number;
     comment: string;
+    productId: string;
+    prevStock: number;
   }[];
 };
 
@@ -29,64 +31,74 @@ const OrderConfirmTableModal: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const session = useStore((state) => state.session);
-  const checkedProducts = useStore((state) => state.checkedProducts);
+  const checkedOrders = useStore((state) => state.checkedOrders);
   const supabase = createClientComponentClient<Database>();
   const stockPlaces = useStore((state) => state.stockPlaces);
   const [stockPlaceId, setStockPlaceId] = useState<number>(0);
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
 
-  console.log(session);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    control,
-    formState: { errors },
-  } = useForm<Inputs>();
+  const mothods
+   = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const id = await addOrderId();
-    if (!id) return;
-    await addOrderDetails(data, id);
-    reset();
+    await addIncomingDetails(data);
+    await updateOrderHistories(data)
+    await updateSkus(data)
+    mothods.reset();
     setIsOpen(false);
     router.refresh();
   };
 
-  const addOrderId = async () => {
-    const { data: order, error } = await supabase
-      .from("order_histories")
-      .insert({
-        create_user: session?.user.id || "",
-      }).select("id").single();
-    if (error) {
-      console.log(error);
-      return;
-    }
-    if (!order) return;
-    return order.id;
-  };
-
-  const addOrderDetails = async (data: Inputs, id: number) => {
+  const addIncomingDetails = async (data: Inputs) => {
     const newData = data.contents.map((content) => ({
-      order_id: id,
-      product_id: content.productId,
-      order_quantity: Number(content.quantity),
-      quantity: Number(content.quantity),
-      create_user: session?.user.id || "",
-      order_date: data.orderDate,
-      availability_date: data.availabilityDate,
+      incoming_date: data.incomingDate,
       stock_place_id: stockPlaceId,
-      comment: content.comment
+      create_user: session?.user.id || "",
+      order_detail_id: content.id,
+      price: Number(content.price),
+      quantity: Number(content.quantity),
+      comment: content.comment,
     }));
     const { data: order, error } = await supabase
-      .from("order_details")
+      .from("incoming_details")
       .insert(newData);
     if (error) {
       console.log(error);
       return;
     }
+  };
+
+  const updateOrderHistories = async (data: Inputs) => {
+    data.contents.forEach(async(content,idx) => {
+      const { data: order, error } = await supabase
+        .from("order_details")
+        .update({
+          quantity: Number(content.remainingQuantity)
+        })
+        .eq("id", content.id);
+      if (error) {
+        console.log(error);
+        return;
+      }
+      mothods.setValue(`contents.${idx}.remainingQuantity`,Number(content.remainingQuantity))
+    })
+  };
+
+  const updateSkus = async (data: Inputs) => {
+    data.contents.forEach(async (content, idx) => {
+      const { data: sku, error } = await supabase
+        .from("skus")
+        .update({
+          stock: Number(content.prevStock) + Number(content.quantity),
+        })
+        .eq("product_id", content.productId)
+        .eq("stock_place_id", stockPlaceId);
+      if (error) {
+        console.log(error);
+        return;
+      }
+    })
   };
 
   const ThStyle = "p-1 px-3 w-auto";
@@ -106,7 +118,7 @@ const OrderConfirmTableModal: FC = () => {
         setIsOpen={setIsOpen}
         closeButton={false}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={mothods.handleSubmit(onSubmit)}>
           <div className="flex gap-3">
             <div>
               <Select
@@ -121,20 +133,14 @@ const OrderConfirmTableModal: FC = () => {
                 ))}
               </Select>
             </div>
-            <div>
-              <Input
-                label="発注日"
-                type="date"
-                defaultValue={today}
-                register={{ ...register("orderDate", { required: true }) }}
-              />
-            </div>
+
             <div>
               <Input
                 label="入荷日"
                 type="date"
+                defaultValue={today}
                 register={{
-                  ...register("availabilityDate", { required: true }),
+                  ...mothods.register("incomingDate", { required: true }),
                 }}
               />
             </div>
@@ -147,23 +153,22 @@ const OrderConfirmTableModal: FC = () => {
                 <th className={`${ThStyle}`}>サイズ</th>
                 <th className={`${ThStyle}`}>カテゴリー</th>
                 <th className={`${ThStyle}`}>仕入先</th>
-                <th className={`${ThStyle}`}>マスター価格</th>
                 <th className={`${ThStyle}`}>価格</th>
-                <th className={`${ThStyle} text-right`}>徳島在庫</th>
-                <th className={`${ThStyle}`}>数量</th>
+                <th className={`${ThStyle}`}>入荷予定</th>
+                <th className={`${ThStyle}`}>入荷数量</th>
+                <th className={`${ThStyle}`}>残数量</th>
                 <th className={`${ThStyle}`}>コメント</th>
                 <th className={`${ThStyle} text-center`}>削除</th>
               </tr>
             </thead>
             <tbody>
-              {checkedProducts.map((product, idx) => (
+              {checkedOrders.map((order, idx) => (
                 <OrderConfirmTableRow
-                  key={product.id}
-                  product={product}
-                  stockPlaceId={stockPlaceId}
-                  register={register}
-                  control={control}
+                  key={order.id}
+                  order={order}
+                  mothods={mothods}
                   idx={idx}
+                  stockPlaceId={stockPlaceId}
                 />
               ))}
             </tbody>

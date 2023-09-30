@@ -20,11 +20,11 @@ interface Props {
   product: ProductRow;
   allCheck: "ADD" | "REMOVE" | null;
   setAllCheck: React.Dispatch<React.SetStateAction<"ADD" | "REMOVE" | null>>;
+  isCheckedListIncludes:(id:string) => boolean
 }
 
-const AllProductsTableRow: FC<Props> = ({ product, allCheck, setAllCheck }): JSX.Element => {
+const AllProductsTableRow: FC<Props> = ({ product, allCheck, setAllCheck ,isCheckedListIncludes}): JSX.Element => {
   const router = useRouter();
-  const checkedList = useStore((state) => state.checkedList);
   const setCheckedList = useStore((state) => state.setCheckedList);
   const removeCheckedList = useStore((state) => state.removeCheckedList);
   const supabase = createClientComponentClient();
@@ -48,9 +48,9 @@ const AllProductsTableRow: FC<Props> = ({ product, allCheck, setAllCheck }): JSX
 
   const handleCheckInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked === true) {
-      setCheckedList([e.target.name]);
+      setCheckedList([e.target.value]);
     } else {
-      removeCheckedList(e.target.name);
+      removeCheckedList(e.target.value);
     }
   };
 
@@ -68,10 +68,10 @@ const AllProductsTableRow: FC<Props> = ({ product, allCheck, setAllCheck }): JSX
 
   useEffect(() => {
     if (!inputRef.current) return;
-    const result = checkedList.includes(product.id);
+    const result = isCheckedListIncludes(String(product.id));
     if (result) inputRef.current.checked = true;
     if (!result) inputRef.current.checked = false;
-  }, [checkedList, product.id]);
+  }, [isCheckedListIncludes, product.id]);
 
   const addCopy = (id: string) => {
     const result = confirm("商品をコピーしますか？");
@@ -87,7 +87,7 @@ const AllProductsTableRow: FC<Props> = ({ product, allCheck, setAllCheck }): JSX
         <div className="w-6 flex items-center justify-center">
           <input
             ref={inputRef}
-            name={product.id}
+            value={product.id}
             type="checkbox"
             onChange={handleCheckInput}
             className="cursor-pointer"
@@ -137,4 +137,4 @@ const AllProductsTableRow: FC<Props> = ({ product, allCheck, setAllCheck }): JSX
   );
 };
 
-export default React.memo(AllProductsTableRow);
+export default AllProductsTableRow;
