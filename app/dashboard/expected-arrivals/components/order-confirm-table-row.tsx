@@ -1,8 +1,8 @@
-import Input from '@/components/ui/input';
-import { Database } from '@/schema';
-import { useStore } from '@/store';
-import React, { FC } from 'react';
-import { Control, UseFormRegister, useFieldArray } from 'react-hook-form';
+import Input from "@/components/ui/input";
+import { Database } from "@/schema";
+import { useStore } from "@/store";
+import React, { FC } from "react";
+import { Control, UseFormRegister, useFieldArray } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -21,29 +21,35 @@ interface Props {
 }
 
 type Inputs = {
-  outgoingDate: string;
+  availabilityDate: string;
+  orderDate: string;
   contents: {
     productId: string;
     skuId: string;
     stock: number;
     quantity: number;
-    arrivalDate: string;
-    orderDate: string;
+    price: number;
     comment: string;
   }[];
 };
 
-const OutgoingTableRow: FC<Props> = ({ product, register, control, idx, stockPlaceId }) => {
+const OrderConfirmTableRow: FC<Props> = ({
+  product,
+  register,
+  control,
+  idx,
+  stockPlaceId
+}) => {
   const checkedProducts = useStore((state) => state.checkedProducts);
   const setCheckedProducts = useStore((state) => state.setCheckedProducts);
   const removeCheckedList = useStore((state) => state.removeCheckedList);
 
   const handleCheckedClose = (idx: number) => {
-    const newProducts = checkedProducts.filter((_, index: number) => (
-      index !== idx
-    ));
+    const newProducts = checkedProducts.filter(
+      (_, index: number) => index !== idx
+    );
     setCheckedProducts(newProducts);
-    const product = newProducts.find((_, index) => (index === idx));
+    const product = newProducts.find((_, index) => index === idx);
     if (!product) return;
     removeCheckedList(product.id);
     remove(idx);
@@ -54,7 +60,7 @@ const OutgoingTableRow: FC<Props> = ({ product, register, control, idx, stockPla
     name: "contents",
   });
 
-  const TdStyle = "p-1 px-3 ";
+  const TdStyle = "p-1 px-3 text-sm ";
 
   return (
     <tr key={product.id} className="border-b h-12">
@@ -88,31 +94,56 @@ const OutgoingTableRow: FC<Props> = ({ product, register, control, idx, stockPla
       <td className={`${TdStyle}`}>{product.categories?.category_name}</td>
       <td className={`${TdStyle}`}>{product.suppliers?.supplier_name}</td>
       <td className={`${TdStyle} text-right`}>{product.price}</td>
+      <td className={`${TdStyle}`}>
+        <Input
+          type="number"
+          className="w-24"
+          required={true}
+          defaultValue={product.price}
+          register={{
+            ...register(`contents.${idx}.price`, {
+              required: true,
+              min: 0.01,
+            }),
+          }}
+        />
+      </td>
       <td className={`${TdStyle} text-right`}>
         {product.skus && product?.skus[0]?.stock ? product?.skus[0]?.stock : 0}
       </td>
       <td className={`${TdStyle}`}>
         <Input
           type="number"
-          className="w-32"
+          className="w-24"
           required={true}
-          register={{ ...register(`contents.${idx}.quantity`, { required: true, min: 0.01 }) }}
+          register={{
+            ...register(`contents.${idx}.quantity`, {
+              required: true,
+              min: 0.01,
+            }),
+          }}
+          defaultValue={0}
         />
       </td>
       <td className={`${TdStyle}`}>
         <Input
-          type="number"
-          register={{ ...register(`contents.${idx}.comment`) }}
+          className="w-64"
+          required={true}
+          register={{
+            ...register(`contents.${idx}.comment`),
+          }}
         />
       </td>
       <td>
         <div className="flex justify-center">
-          <AiOutlineClose className="cursor-pointer"
-            onClick={() => handleCheckedClose(idx)} />
+          <AiOutlineClose
+            className="cursor-pointer"
+            onClick={() => handleCheckedClose(idx)}
+          />
         </div>
       </td>
     </tr>
   );
 };
 
-export default OutgoingTableRow;
+export default OrderConfirmTableRow;

@@ -26,7 +26,7 @@ interface Props {
   removeCheckedList: (checked: string) => void;
 }
 
-const OrderHistoryTableRow: FC<Props> = ({
+const ExpectedArrivalTableRow: FC<Props> = ({
   order,
   allCheck,
   setAllCheck,
@@ -97,4 +97,4 @@ const OrderHistoryTableRow: FC<Props> = ({
   );
 };
 
-export default React.memo(OrderHistoryTableRow);
+export default React.memo(ExpectedArrivalTableRow);

@@ -33,7 +33,7 @@ const IncomingTableRow: FC<Props> = ({ incomingDetail }) => {
   return (
     <tr key={incomingDetail.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
-        {incomingDetail.order_number}
+        {incomingDetail.order_id}
       </td>
       <td className={`${TdStyle}`}>
         {incomingDetail.order_date}

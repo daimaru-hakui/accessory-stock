@@ -8,26 +8,26 @@ import AllProductsControl from "./all-products-control";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 interface ProductRow extends Product {
-  skus: { id: string; stock: number }[] | null;
-  suppliers: { id: string; supplier_name: string } | null;
-  categories: { id: string; category_name: string } | null;
+  skus: { id: string; stock: number; }[] | null;
+  suppliers: { id: string; supplier_name: string; } | null;
+  categories: { id: string; category_name: string; } | null;
 }
 interface Props {
   products: ProductRow[];
 }
 
 const AllProductsTable: FC<Props> = ({ products }) => {
-  const [check, setCheck] = useState<"ADD" | "REMOVE" | "NONE">("NONE");
+  const [allCheck, setAllCheck] = useState<"ADD" | "REMOVE" | null>(null);
   const setCheckedProducts = useStore((state) => state.setCheckedProducts);
   const checkedList = useStore((state) => state.checkedList);
   const resetCheckedList = useStore((state) => state.resetCheckedList);
 
   const handleAllCheckedList = () => {
     if (checkedList.length === 0) {
-      setCheck("ADD");
+      setAllCheck("ADD");
     } else {
       resetCheckedList();
-      setCheck("REMOVE");
+      setAllCheck("REMOVE");
     }
   };
 
@@ -44,13 +44,17 @@ const AllProductsTable: FC<Props> = ({ products }) => {
     setCheckedProducts(array);
   }, [products, checkedList, setCheckedProducts]);
 
+  useEffect(() => {
+    resetCheckedList();
+  }, [resetCheckedList]);
+
   const ThStyle = "p-2";
 
   return (
     <div className="w-full">
-      <AllProductsControl setCheck={setCheck} />
+      <AllProductsControl setAllCheck={setAllCheck} />
       <div className="mt-3 overflow-auto max-h-[calc(100vh-220px)]">
-        <table className="w-full min-w-[calc(1100px)] ">
+        <table className="w-full min-w-[calc(1200px)] ">
           <thead className="text-left text-xs sticky top-0 bg-zinc-50">
             <tr className="border-b h-12">
               <th className={`${ThStyle}`}>
@@ -81,8 +85,8 @@ const AllProductsTable: FC<Props> = ({ products }) => {
               <AllProductsTableRow
                 key={product.id}
                 product={product}
-                check={check}
-                setCheck={setCheck}
+                allCheck={allCheck}
+                setAllCheck={setAllCheck}
               />
             ))}
           </tbody>

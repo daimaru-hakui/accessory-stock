@@ -59,6 +59,9 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
     getSku();
   }, [order, supabase]);
 
+ 
+  console.log(order.quantity)
+
   const {
     register,
     handleSubmit,
@@ -75,6 +78,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
       comment: order.comment,
     },
   });
+
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data);
@@ -113,6 +117,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
       console.log(error);
       return;
     }
+    setValue("quantity",Number(data.remainingQuantity))
   };
 
   const updateSku = async (data: Inputs) => {
@@ -160,7 +165,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
           </div>
           <div className="mt-6 flex flex-col gap-6">
             <div>
-              <div className="font-bold text-xs">発注数量</div>
+              <div className="font-bold text-xs">入荷予定</div>
               <span className="ml-3">{order.quantity}</span>
             </div>
 
@@ -173,6 +178,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
                       type="number"
                       className="w-full"
                       required={true}
+                      defaultValue={order.quantity}
                       register={{
                         ...register("quantity", { required: true, min: 0.01 }),
                       }}

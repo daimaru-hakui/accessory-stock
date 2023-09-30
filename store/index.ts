@@ -4,7 +4,8 @@ import { Database } from "@/schema";
 
 type Supplier = Database["public"]["Tables"]["suppliers"]["Row"];
 type Categorie = Database["public"]["Tables"]["categories"]["Row"];
-type StcokPlace = Database["public"]["Tables"]["stock_places"]["Row"];
+type StockPlace = Database["public"]["Tables"]["stock_places"]["Row"];
+type OrderDetail = Database["public"]["Tables"]["order_details"]["Row"];
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -12,6 +13,11 @@ interface ProductRow extends Product {
   skus: { id: string; stock: number; }[] | null;
   suppliers: { id: string; supplier_name: string; } | null;
   categories: { id: string; category_name: string; } | null;
+}
+
+interface Order extends OrderDetail {
+  products: ProductRow | null;
+  stock_places: { id: number; stock_place_name: string; } | null;
 }
 
 
@@ -24,10 +30,12 @@ type Store = {
   setSuppliers: (suppliers: Supplier[]) => void;
   categories: Categorie[];
   setCategories: (categories: Categorie[]) => void;
-  stockPlaces: StcokPlace[];
-  setStockPlaces: (stockPlaces: StcokPlace[]) => void;
+  stockPlaces: StockPlace[];
+  setStockPlaces: (stockPlaces: StockPlace[]) => void;
   checkedProducts: ProductRow[];
   setCheckedProducts: (checkedProducts: ProductRow[]) => void;
+  checkedOrders: Order[];
+  setCheckedOrders: (checkedOrders: Order[]) => void;
   checkedList: string[];
   setCheckedList: (checkedList: string[]) => void;
   filterCheckedList: (checkedList: string[]) => void;
@@ -48,6 +56,8 @@ export const useStore = create<Store>((set) => ({
   setStockPlaces: (stockPlaces) => set({ stockPlaces }),
   checkedProducts: [],
   setCheckedProducts: (checkedProducts) => set({ checkedProducts }),
+  checkedOrders: [],
+  setCheckedOrders: (checkedOrders) => set({ checkedOrders }),
   checkedList: [],
   setCheckedList: (checkedList) =>
     set((state) => ({ checkedList: [...state.checkedList, ...checkedList] })),

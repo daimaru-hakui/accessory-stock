@@ -23,10 +23,10 @@ const Sidebar = () => {
           {sidebarLinks.map(({ path, name, icon }) => (
             <li
               key={path}
-              className="my1 py-2 px-3 text-sm hover:font-bold hover:bg-gray-50 rounded-sm"
+              className="my-1 "
               style={{ fontWeight: path === pathname ? "bold" : "normal" }}
             >
-              <Link href={path} className="flex items-center gap-3">
+              <Link href={path} className="flex items-center gap-3 py-2 px-3 text-sm hover:font-bold hover:bg-gray-50 rounded-sm">
                 <div>{icon}</div>
                 <div>{name}</div>
               </Link>

@@ -3,9 +3,9 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/schema';
 import { cookies } from "next/headers";
 import { NextPage } from 'next';
-import OrderHistoryTable from './components/order-history-table';
+import OrderHistoryTable from './components/expected_arrival-table';
 
-const OrderIndex: NextPage = async () => {
+const ExpectedArrivalPage: NextPage = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
     .from("order_details")
@@ -14,6 +14,7 @@ const OrderIndex: NextPage = async () => {
     suppliers(id,supplier_name),
     skus(id,stock)),
     stock_places(id,stock_place_name)`)
+    .gt("quantity",0)
     .order("id", { ascending: false });
 
   if (error) {
@@ -32,4 +33,4 @@ const OrderIndex: NextPage = async () => {
   );
 };
 
-export default OrderIndex;
+export default ExpectedArrivalPage;

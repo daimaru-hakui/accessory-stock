@@ -9,8 +9,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import Input from "@/components/ui/input";
-import OrderTableRow from "./order-table-row";
 import { format } from "date-fns";
+import OrderConfirmTableRow from "./order-confirm-table-row";
 
 type Inputs = {
   availabilityDate: string;
@@ -25,7 +25,7 @@ type Inputs = {
   }[];
 };
 
-const OrderTableModal: FC = () => {
+const OrderConfirmTableModal: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const session = useStore((state) => state.session);
@@ -56,7 +56,7 @@ const OrderTableModal: FC = () => {
 
   const addOrderId = async () => {
     const { data: order, error } = await supabase
-      .from("orders")
+      .from("order_histories")
       .insert({
         create_user: session?.user.id || "",
       }).select("id").single();
@@ -98,10 +98,10 @@ const OrderTableModal: FC = () => {
         className="cursor-pointer"
         onClick={() => setIsOpen(true)}
       >
-        発注
+        確定
       </Button>
       <Modal
-        title="発注"
+        title="確定"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         closeButton={false}
@@ -157,7 +157,7 @@ const OrderTableModal: FC = () => {
             </thead>
             <tbody>
               {checkedProducts.map((product, idx) => (
-                <OrderTableRow
+                <OrderConfirmTableRow
                   key={product.id}
                   product={product}
                   stockPlaceId={stockPlaceId}
@@ -187,4 +187,4 @@ const OrderTableModal: FC = () => {
   );
 };
 
-export default OrderTableModal;
+export default OrderConfirmTableModal;
