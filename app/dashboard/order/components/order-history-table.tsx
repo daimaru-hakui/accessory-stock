@@ -69,7 +69,7 @@ const OrderHistoryTable: FC<Props> = ({ orders }) => {
                 checked={checkedList.length > 0 ? true : false}
                 onChange={handleAllCheckedList} />
             </th>
-            <th className={`${ThStyle}`}>アクション</th>
+            <th className={`${ThStyle}`}>詳細</th>
             <th className={`${ThStyle}`}>発注No.</th>
             <th className={`${ThStyle}`}>発注日</th>
             <th className={`${ThStyle}`}>入荷予定日</th>
