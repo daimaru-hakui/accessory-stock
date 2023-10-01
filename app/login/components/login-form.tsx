@@ -3,8 +3,8 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Button from "../../../components/ui/Button";
-import Input from "../../../components/ui/input";
+import Button from "@/app/components/ui/Button";
+import Input from "@/app/components/ui/input";
 
 type Inputs = {
   email: string;

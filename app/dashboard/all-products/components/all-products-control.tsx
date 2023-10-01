@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import OutgoingTableModal from "./outgoing-table-modal";
-import { useStore } from "@/store";
-import Button from "@/components/ui/Button";
+import { useStore } from "@/app/store";
+import Button from "@/app/components/ui/Button";
 import { Database } from "@/schema";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";

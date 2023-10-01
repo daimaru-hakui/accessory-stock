@@ -1,5 +1,5 @@
 "use client";
-import Modal from '@/components/ui/modal';
+import Modal from '@/app/components/ui/modal';
 import { Database } from '@/schema';
 import React, { FC, useState } from 'react';
 import { BiSolidEditAlt } from "react-icons/bi";

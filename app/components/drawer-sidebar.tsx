@@ -1,7 +1,7 @@
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 import { usePathname } from "next/navigation";
 import React, { FC } from "react";
-import { sidebarLinks } from "@/utils/links";
+import { sidebarLinks } from "@/app/utils/links";
 import Link from "next/link";
 import { AiOutlineClose } from "react-icons/ai";
 import Logo from "@/app/logo";

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 import OrderConfirmTableModal from "./order-confirm-table-modal";
 
 const ExpectedArrivalControl: FC = () => {

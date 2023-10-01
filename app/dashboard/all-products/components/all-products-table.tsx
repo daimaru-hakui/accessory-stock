@@ -2,7 +2,7 @@
 import React, { FC, useState, useEffect, useCallback } from "react";
 import AllProductsTableRow from "./all-products-table-row";
 import { Database } from "@/schema";
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 import AllProductsControl from "./all-products-control";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];

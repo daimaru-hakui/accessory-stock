@@ -1,6 +1,6 @@
 import React from "react";
 import ProductForm from "./components/product-form";
-import { EditedProduct } from "@/types";
+import { EditedProduct } from "@/app/types";
 
 const AddProduct = async () => {
 

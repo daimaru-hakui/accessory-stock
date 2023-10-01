@@ -1,6 +1,6 @@
 "use client";
 import { Database } from "@/schema";
-import React, { FC, useRef, useEffect } from "react";
+import React, { FC} from "react";
 import OrderConfirmModal from "./order-confirm-modal";
 
 type OrderDetail = Database["public"]["Tables"]["order_details"]["Row"];
