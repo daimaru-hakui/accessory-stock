@@ -19,59 +19,26 @@ interface Order extends OrderDetail {
 
 interface Props {
   order: Order;
-  allCheck: "ADD" | "REMOVE" | null;
-  setAllCheck: React.Dispatch<React.SetStateAction<"ADD" | "REMOVE" | null>>;
-  setCheckedList: (checked: string[]) => void;
-  removeCheckedList: (checked: string) => void;
-  isCheckedListIncludes: (id: string) => boolean;
+  handleCheckedBox:(e: React.ChangeEvent<HTMLInputElement>,id:number)=>void
+  isChecked: (id: number) => boolean;
 }
 
 const ExpectedArrivalTableRow: FC<Props> = ({
   order,
-  allCheck,
-  setAllCheck,
-  setCheckedList,
-  removeCheckedList,
-  isCheckedListIncludes
+  handleCheckedBox,
+  isChecked
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleCheckInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked === true) {
-      setCheckedList([e.target.value]);
-    } else {
-      removeCheckedList(e.target.value);
-    }
-  };
-
-  useEffect(() => {
-    if (!inputRef.current) return;
-    if (allCheck === "REMOVE") {
-      inputRef.current.checked = false;
-      setAllCheck(null);
-    } else if (allCheck === "ADD") {
-      inputRef.current.checked = true;
-      setCheckedList([String(order.id)]);
-      setAllCheck(null);
-    }
-  }, [allCheck, order.id, setAllCheck, setCheckedList]);
-
-  useEffect(() => {
-    if (!inputRef.current) return;
-    const result = isCheckedListIncludes(String(order.id));
-    if (result) inputRef.current.checked = true;
-    if (!result) inputRef.current.checked = false;
-  }, [isCheckedListIncludes, order.id]);
 
   const TdStyle = "p-1 px-3 ";
+
   return (
     <tr key={order.id} className="border-b h-12">
       <td className={`${TdStyle}`}>
         <input
-          ref={inputRef}
-          value={String(order.id)}
+          value={order.id}
           type="checkbox"
-          onChange={handleCheckInput}
+          checked={isChecked(order.id)}
+          onChange={(e)=>handleCheckedBox(e,order.id)}
           className="cursor-pointer"
         />
       </td>

@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState, useEffect ,useCallback} from "react";
+import React, { FC, useState, useEffect, useCallback } from "react";
 import AllProductsTableRow from "./all-products-table-row";
 import { Database } from "@/schema";
 import { useStore } from "@/store";
@@ -17,46 +17,47 @@ interface Props {
 }
 
 const AllProductsTable: FC<Props> = ({ products }) => {
-  const [allCheck, setAllCheck] = useState<"ADD" | "REMOVE" | null>(null);
   const setCheckedProducts = useStore((state) => state.setCheckedProducts);
-  const checkedList = useStore((state) => state.checkedList);
-  const resetCheckedList = useStore((state) => state.resetCheckedList);
+  const checkedProducts = useStore((state) => state.checkedProducts);
+
+  useEffect(() => {
+    setCheckedProducts([]);
+  }, [setCheckedProducts]);
 
   const handleAllCheckedList = () => {
-    if (checkedList.length === 0) {
-      setAllCheck("ADD");
+    if (checkedProducts.length === 0) {
+      setCheckedProducts(products);
     } else {
-      resetCheckedList();
-      setAllCheck("REMOVE");
+      setCheckedProducts([]);
     }
   };
 
-  const isCheckedListIncludes = useCallback((id:string) => {
-    return checkedList.includes(id)
-  },[checkedList])
+  const handleCheckedBox = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
+    if (e.target.checked) {
+      const newOrder = products.find((product) => product.id === id);
+      if (!newOrder) return;
+      setCheckedProducts([...checkedProducts, newOrder]);
+    } else {
+      const newOrders = checkedProducts.filter((product) => {
+        product.id !== id;
+      });
+      setCheckedProducts(newOrders);
+    }
+  };
 
-  useEffect(() => {
-    const newProducts = checkedList.map((checkId) =>
-      products.find((product) => product.id === checkId)
-    );
-    let array: ProductRow[] = [];
-    newProducts.forEach((product) => {
-      if (product !== undefined) {
-        array.push(product);
-      }
-    });
-    setCheckedProducts(array);
-  }, [products, checkedList, setCheckedProducts]);
+  const isChecked = useCallback((id: string) => {
+    const checkedList = checkedProducts.map((order) => (
+      order.id
+    ));
+    return checkedList.includes(id);
+  }, [checkedProducts]);
 
-  useEffect(() => {
-    resetCheckedList();
-  }, [resetCheckedList]);
 
   const ThStyle = "p-2";
 
   return (
     <div className="w-full">
-      <AllProductsControl setAllCheck={setAllCheck} />
+      <AllProductsControl />
       <div className="mt-3 overflow-auto max-h-[calc(100vh-220px)]">
         <table className="w-full min-w-[calc(1200px)] ">
           <thead className="text-left text-xs sticky top-0 bg-zinc-50">
@@ -65,7 +66,7 @@ const AllProductsTable: FC<Props> = ({ products }) => {
                 <div className="w-6 flex items-center justify-center">
                   <input
                     type="checkbox"
-                    checked={checkedList.length > 0 ? true : false}
+                    checked={checkedProducts.length > 0 ? true : false}
                     onChange={handleAllCheckedList}
                     className="cursor-pointer"
                   />
@@ -89,9 +90,8 @@ const AllProductsTable: FC<Props> = ({ products }) => {
               <AllProductsTableRow
                 key={product.id}
                 product={product}
-                allCheck={allCheck}
-                setAllCheck={setAllCheck}
-                isCheckedListIncludes={isCheckedListIncludes}
+                handleCheckedBox={handleCheckedBox}
+                isChecked={isChecked}
               />
             ))}
           </tbody>

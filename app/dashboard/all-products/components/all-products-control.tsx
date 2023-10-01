@@ -1,4 +1,4 @@
-import React, { FC, SetStateAction } from "react";
+import React, { FC } from "react";
 import OutgoingTableModal from "./outgoing-table-modal";
 import { useStore } from "@/store";
 import Button from "@/components/ui/Button";
@@ -15,14 +15,8 @@ interface ProductRow extends Product {
   categories: { id: string; category_name: string; } | null;
 }
 
-interface Props {
-  setAllCheck: React.Dispatch<SetStateAction<"ADD" | "REMOVE" | null>>;
-}
-
-const AllProductsControl: FC<Props> = ({ setAllCheck }) => {
+const AllProductsControl: FC = () => {
   const checkedProducts = useStore((state) => state.checkedProducts);
-  const checkedList = useStore((state) => state.checkedList);
-  const resetCheckedList = useStore((state) => state.resetCheckedList);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -42,14 +36,12 @@ const AllProductsControl: FC<Props> = ({ setAllCheck }) => {
         return;
       }
     });
-    resetCheckedList();
-    setAllCheck("REMOVE");
     router.refresh();
   };
 
   return (
     <div className="h-8">
-      {checkedProducts && checkedList.length > 0 && (
+      {checkedProducts.length > 0 && (
         <div className="flex justify-between gap-3">
           <div className="flex gap-3">
             <OrderTableModal />

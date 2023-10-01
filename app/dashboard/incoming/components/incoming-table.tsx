@@ -50,7 +50,7 @@ const IncomingTable: FC<Props> = ({ incomingDetails }) => {
           </tr>
         </thead>
         <tbody className="text-sm">
-          {incomingDetails?.map((incomingDetail) => (
+          {incomingDetails.reverse()?.map((incomingDetail) => (
             <IncomingTableRow
               key={incomingDetail.id}
               incomingDetail={incomingDetail}

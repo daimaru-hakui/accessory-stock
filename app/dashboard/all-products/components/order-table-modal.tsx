@@ -73,6 +73,7 @@ const OrderTableModal: FC = () => {
       product_id: content.productId,
       order_quantity: Number(content.quantity),
       quantity: Number(content.quantity),
+      price: Number(content.price),
       create_user: session?.user.id || "",
       order_date: data.orderDate,
       availability_date: data.availabilityDate,

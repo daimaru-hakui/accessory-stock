@@ -1,6 +1,6 @@
 "use client";
 import { Database } from "@/schema";
-import React, { FC, useState, useEffect,useCallback } from "react";
+import React, { FC, useEffect, useCallback } from "react";
 import OrderHistoryTableRow from "./expected_arrival-table-row";
 import { useStore } from "@/store";
 import ExpectedArrivalControl from "./expected-arrival-control";
@@ -24,55 +24,54 @@ interface Props {
 }
 
 const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
-  const [allCheck, setAllCheck] = useState<"ADD" | "REMOVE" | null>(null);
-  const checkedList = useStore((state) => state.checkedList);
+  const checkedOrders = useStore((state) => state.checkedOrders);
   const setCheckedOrders = useStore((state) => state.setCheckedOrders);
-  const setCheckedList = useStore((state) => state.setCheckedList);
-  const removeCheckedList = useStore((state) => state.removeCheckedList);
-  const resetCheckedList = useStore((state) => state.resetCheckedList);
+
+  useEffect(() => {
+    setCheckedOrders([])
+  },[setCheckedOrders])
 
   const handleAllCheckedList = () => {
-    if (checkedList.length === 0) {
-      setAllCheck("ADD");
+    if (checkedOrders.length === 0) {
+      setCheckedOrders(orders)
     } else {
-      resetCheckedList();
-      setAllCheck("REMOVE");
+      setCheckedOrders([])
     }
   };
 
-  const isCheckedListIncludes = useCallback((id:string) => {
-    return checkedList.includes(id)
-  },[checkedList])
+  const handleCheckedBox = useCallback((e: React.ChangeEvent<HTMLInputElement>,id:number) => {
+    if (e.target.checked) {
+      const newOrder = orders.find((order) => order.id === id)
+      if(!newOrder) return
+      setCheckedOrders([...checkedOrders,newOrder]);
+    } else {
+      const newOrders = checkedOrders.filter((order) => {
+        order.id !== id
+      });
+      setCheckedOrders(newOrders);
+    }
+  },[orders,checkedOrders,setCheckedOrders]);
 
-  useEffect(() => {
-    resetCheckedList();
-  }, [resetCheckedList]);
+  const isChecked = useCallback((id: number) => {
+    const checkedList = checkedOrders.map((order) => (
+      order.id
+    ))
+    return checkedList.includes(id);
+  }, [checkedOrders]);
 
-  useEffect(() => {
-    const newOrders = checkedList.map((checkId) =>
-      orders.find((order) => String(order.id) === checkId)
-    )
-    let array: Order[] = [];
-    newOrders.forEach((order) => {
-      if (order !== undefined) {
-        array.push(order);
-      }
-    });
-    setCheckedOrders(array);
-  }, [checkedList, orders, setCheckedOrders]);
 
   const ThStyle = "p-1";
 
   return (
     <div className="w-full">
-      <ExpectedArrivalControl setAllCheck={setAllCheck} />
+      <ExpectedArrivalControl />
       <div className="mt-3 overflow-auto max-h-[calc(100vh-220px)]">
         <table className="w-full min-w-[calc(1100px)]">
           <thead className="text-left text-xs sticky top-0 bg-zinc-50">
             <tr className="border-b h-12">
               <th className={`${ThStyle} text-center`}>
                 <input type="checkbox"
-                  checked={checkedList.length > 0 ? true : false}
+                  checked={checkedOrders.length > 0 ? true : false}
                   onChange={handleAllCheckedList} />
               </th>
               <th className={`${ThStyle}`}>確定処理</th>
@@ -94,12 +93,9 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
             {orders?.map((order) => (
               <OrderHistoryTableRow
                 key={order.id}
+                handleCheckedBox={handleCheckedBox}
                 order={order}
-                allCheck={allCheck}
-                setAllCheck={setAllCheck}
-                setCheckedList={setCheckedList}
-                removeCheckedList={removeCheckedList}
-                isCheckedListIncludes={isCheckedListIncludes}
+                isChecked={isChecked}
               />
             ))}
           </tbody>
