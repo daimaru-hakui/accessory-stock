@@ -49,7 +49,6 @@ const OrderConfirmTableRow: FC<Props> = ({
 }) => {
   const checkedOrders = useStore((state) => state.checkedOrders);
   const setCheckedOrders = useStore((state) => state.setCheckedOrders);
-  const removeCheckedList = useStore((state) => state.removeCheckedList);
   const { register, control, watch, setValue } = mothods;
 
   const handleCheckedClose = (idx: number) => {
@@ -57,9 +56,6 @@ const OrderConfirmTableRow: FC<Props> = ({
       (_, index: number) => index !== idx
     );
     setCheckedOrders(newOrders);
-    const order = checkedOrders.find((_, index) => index === idx);
-    if (!order) return;
-    removeCheckedList(String(order.id));
     remove(idx);
   };
 

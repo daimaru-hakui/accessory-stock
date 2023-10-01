@@ -8,12 +8,16 @@ import OrderHistoryTable from './components/order-history-table';
 const OrderIndex: NextPage = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
   const { data, error } = await supabase
-    .from("order_details")
-    .select(`*,products(*,
-    categories(id,category_name),
-    suppliers(id,supplier_name),
-    skus(id,stock)),
-    stock_places(id,stock_place_name)`)
+    .from("orders")
+    .select(`*,
+    order_details(*,
+      products(*,
+      categories(id,category_name),
+      suppliers(id,supplier_name),
+      skus(id,stock)
+      ),
+    stock_places(id,stock_place_name)
+    )`)
     .order("id", { ascending: false });
 
   if (error) {
@@ -24,7 +28,7 @@ const OrderIndex: NextPage = async () => {
 
   return (
     <div className="w-full">
-      <h1 className="font-bold text-lg">入荷予定</h1>
+      <h1 className="font-bold text-lg">発注履歴</h1>
       <div className="mt-3 flex justify-center items center">
         <OrderHistoryTable orders={data} />
       </div>

@@ -42,16 +42,12 @@ const OrderTableRow: FC<Props> = ({
 }) => {
   const checkedProducts = useStore((state) => state.checkedProducts);
   const setCheckedProducts = useStore((state) => state.setCheckedProducts);
-  const removeCheckedList = useStore((state) => state.removeCheckedList);
 
   const handleCheckedClose = (idx: number) => {
     const newProducts = checkedProducts.filter(
       (_, index: number) => index !== idx
     );
     setCheckedProducts(newProducts);
-    const product = checkedProducts.find((_, index) => index === idx);
-    if (!product) return;
-    removeCheckedList(product.id);
     remove(idx);
   };
 
