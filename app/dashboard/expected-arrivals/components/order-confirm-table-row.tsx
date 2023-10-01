@@ -70,7 +70,7 @@ const OrderConfirmTableRow: FC<Props> = ({
     );
   setValue(`contents.${idx}.remainingQuantity`, quantity);
 
-  const TdStyle = "p-1 px-3 text-sm ";
+  const TdStyle = "p-1 px-3 text-sm";
 
   return (
     <tr key={order.id} className="border-b h-12">

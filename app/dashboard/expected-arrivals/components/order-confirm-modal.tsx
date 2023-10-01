@@ -163,11 +163,30 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-full max-w-[calc(450px)] pb-6"
         >
-          <div className="font-bold text-xs">商品名</div>
-          <div className="ml-3">
+          <div className="flex gap-6 flex-col md:flex-row">
             <div>
-              {order.products?.product_number}
-              <span className="ml-3">{order.products?.product_name}</span>
+              <div className="font-bold text-xs">商品名</div>
+              <div className="ml-3">
+                <div>
+                  {order.products?.product_number}
+                  <span className="ml-3">{order.products?.product_name}</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="font-bold text-xs">カラー</div>
+              <div className="ml-3">
+                <div>
+                  {order.products?.color_number}
+                  <span className="ml-3">{order.products?.color_name}</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="font-bold text-xs">サイズ</div>
+              <div className="ml-3">
+                {order.products?.size}
+              </div>
             </div>
           </div>
           <div className="mt-6 flex flex-col gap-6">
