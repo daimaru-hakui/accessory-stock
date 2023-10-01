@@ -17,7 +17,11 @@ const AllProducts = async () => {
     categories(id,category_name)
    `)
       .is('deleted_at', null)
-      .order("product_name");
+      .order("product_name", { ascending: true })
+      .order("product_number", { ascending: true })
+      .order("color_name", { ascending: true })
+      .order("color_number", { ascending: true })
+      .order("size", { ascending: true });
     return data;
   };
 

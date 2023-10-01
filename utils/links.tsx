@@ -1,5 +1,5 @@
 import { MdOutlineDashboardCustomize, MdAddTask } from "react-icons/md";
-import { FaTasks } from "react-icons/fa";
+import { FaTasks,FaHistory } from "react-icons/fa";
 import { RiIndentIncrease, RiIndentDecrease } from "react-icons/ri";
 import { SlCalender } from "react-icons/sl";
 export const menuLinks = [{}];
@@ -28,7 +28,7 @@ export const sidebarLinks = [
   {
     path: "/dashboard/order",
     name: "発注履歴",
-    icon: <SlCalender />,
+    icon: <FaHistory />,
   },
   {
     path: "/dashboard/incoming",

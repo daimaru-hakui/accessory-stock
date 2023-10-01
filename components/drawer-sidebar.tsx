@@ -13,13 +13,6 @@ const DrawerSidebar: FC = () => {
 
   return (
     <>
-      {isSidebar && (
-        <div
-          className="w-full h-screen fixed top-0 z-30 block md:hidden"
-          style={{ backgroundColor: "rgba(0,0,0,0.5", transition: "0.2s" }}
-          onClick={toggleSidebar}
-        ></div>
-      )}
       <aside
         className="min-h-screen bg-zinc-100 block md:hidden fixed z-30 top-0"
         style={{

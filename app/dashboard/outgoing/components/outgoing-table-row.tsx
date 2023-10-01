@@ -62,6 +62,10 @@ const OutgoingTableRow: FC<Props> = ({ outgoingDetail }) => {
       <td className={`${TdStyle} text-right`}>
         {outgoingDetail.quantity}
       </td>
+      <td className={`${TdStyle} text-right`}>
+        {((outgoingDetail.products?.price || 0) * outgoingDetail.quantity)
+          .toLocaleString("ja-JP")}円
+      </td>
       <td className={`${TdStyle}`}>
         {outgoingDetail.comment}
       </td>

@@ -38,6 +38,7 @@ const OrderModal: FC<Props> = ({ product }) => {
   const router = useRouter();
   const supabase = createClientComponentClient<Database>();
   const session = useStore((state) => state.session);
+  const setIsLoading = useStore((state) => state.setIsLoading);
   const stockPlaces = useStore((state) => state.stockPlaces);
   const [stockPlaceId, setStockPlaceId] = useState<number>(0);
   const now = new Date();
@@ -52,10 +53,12 @@ const OrderModal: FC<Props> = ({ product }) => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setIsLoading(true)
     const id = await addOrderId();
     if (!id) return;
     await addOrderDetail(data, id);
     reset();
+    setIsLoading(false)
     setIsOpen(false);
     router.refresh();
   };
@@ -100,6 +103,7 @@ const OrderModal: FC<Props> = ({ product }) => {
       <Button onClick={() => setIsOpen(true)}>
         発注
       </Button>
+
       <Modal title="発注" isOpen={isOpen} setIsOpen={setIsOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-6 flex flex-col gap-6">

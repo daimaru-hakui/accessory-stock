@@ -60,7 +60,7 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
   }, [checkedOrders]);
 
 
-  const ThStyle = "p-1";
+  const ThStyle = "p-1 px-3";
 
   return (
     <div className="w-full">
@@ -86,6 +86,7 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
               <th className={`${ThStyle}`}>仕入先</th>
               <th className={`${ThStyle} text-center`}>価格</th>
               <th className={`${ThStyle} text-center`}>数量</th>
+              <th className={`${ThStyle} text-center`}>合計</th>
               <th className={`${ThStyle} text-center`}>コメント</th>
             </tr>
           </thead>

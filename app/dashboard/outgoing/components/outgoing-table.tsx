@@ -46,6 +46,7 @@ const OutgoingDetails: FC<Props> = ({ outgoingDetails }) => {
             <th className={`${ThStyle}`}>仕入先</th>
             <th className={`${ThStyle} text-center`}>価格</th>
             <th className={`${ThStyle} text-center`}>数量</th>
+            <th className={`${ThStyle} text-center`}>合計</th>
             <th className={`${ThStyle}`}>コメント</th>
           </tr>
         </thead>

@@ -31,6 +31,7 @@ const OrderConfirmTableModal: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const session = useStore((state) => state.session);
+  const setIsLoading = useStore((state) => state.setIsLoading);
   const checkedOrders = useStore((state) => state.checkedOrders);
   const supabase = createClientComponentClient<Database>();
   const stockPlaces = useStore((state) => state.stockPlaces);
@@ -42,10 +43,12 @@ const OrderConfirmTableModal: FC = () => {
    = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setIsLoading(true)
     await addIncomingDetails(data);
     await updateOrderHistories(data)
     await updateSkus(data)
     mothods.reset();
+    setIsLoading(false)
     setIsOpen(false);
     router.refresh();
   };
@@ -133,7 +136,6 @@ const OrderConfirmTableModal: FC = () => {
                 ))}
               </Select>
             </div>
-
             <div>
               <Input
                 label="入荷日"

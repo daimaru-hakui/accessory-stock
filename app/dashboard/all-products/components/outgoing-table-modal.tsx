@@ -28,6 +28,7 @@ const OutgoingTableModal: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const session = useStore((state) => state.session);
+  const setIsLoading = useStore((state) => state.setIsLoading);
   const checkedProducts = useStore((state) => state.checkedProducts);
   const supabase = createClientComponentClient<Database>();
   const stockPlaces = useStore((state) => state.stockPlaces);
@@ -44,9 +45,11 @@ const OutgoingTableModal: FC = () => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setIsLoading(true)
     await outgoingUpdateStock(data);
     await outgoingAddDetail(data);
     reset();
+    setIsLoading(false)
     setIsOpen(false);
     router.refresh();
   };

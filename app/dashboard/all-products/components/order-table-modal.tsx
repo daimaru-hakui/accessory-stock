@@ -29,6 +29,7 @@ const OrderTableModal: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const session = useStore((state) => state.session);
+  const setIsLoading = useStore((state) => state.setIsLoading);
   const checkedProducts = useStore((state) => state.checkedProducts);
   const supabase = createClientComponentClient<Database>();
   const stockPlaces = useStore((state) => state.stockPlaces);
@@ -45,10 +46,12 @@ const OrderTableModal: FC = () => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setIsLoading(true)
     const id = await addOrderId();
     if (!id) return;
     await addOrderDetails(data, id);
     reset();
+    setIsLoading(false)
     setIsOpen(false);
     router.refresh();
   };

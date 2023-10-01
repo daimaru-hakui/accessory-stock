@@ -66,8 +66,11 @@ const ExpectedArrivalTableRow: FC<Props> = ({
       <td className={`${TdStyle}`}>
         {order.products?.suppliers?.supplier_name}
       </td>
-      <td className={`${TdStyle} text-right`}>{order.price}</td>
+      <td className={`${TdStyle} text-right`}>{order.price}円</td>
       <td className={`${TdStyle} text-right`}>{order.quantity}</td>
+      <td className={`${TdStyle} text-right`}>
+        {(order.price * order.quantity).toLocaleString('ja-JP')}円
+      </td>
       <td className={`${TdStyle}`}>{order.comment}</td>
     </tr>
   );

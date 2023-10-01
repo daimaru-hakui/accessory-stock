@@ -61,15 +61,18 @@ const IncomingTableRow: FC<Props> = ({ incomingDetail }) => {
         {incomingDetail.order_details?.products?.suppliers?.supplier_name}
       </td>
       <td className={`${TdStyle} text-right`}>
-        {incomingDetail.price}
+        {incomingDetail.price}円
       </td>
       <td className={`${TdStyle} text-right`}>
         {incomingDetail.quantity}
       </td>
       <td className={`${TdStyle} text-right`}>
+        {(incomingDetail.price * incomingDetail.quantity)
+          .toLocaleString("ja-JP")}円
+      </td>
+      <td className={`${TdStyle} text-right`}>
         {incomingDetail.comment}
       </td>
-
     </tr >
   );
 };

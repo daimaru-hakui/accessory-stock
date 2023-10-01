@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { Dispatch, FC, SetStateAction } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Input from "@/components/ui/input";
@@ -13,9 +13,16 @@ type Props = {
   defaultValues: EditedProduct;
   id?: string;
   pageType: "NEW" | "EDIT";
+  setIsOpen?: Dispatch<SetStateAction<boolean>>;
 };
 
-const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
+const ProductForm: FC<Props> = ({
+  defaultValues,
+  id = "",
+  pageType,
+  setIsOpen = () => { }
+}) => {
+  const setIsLoading = useStore((state) => state.setIsLoading);
   const suppliers = useStore((state) => state.suppliers);
   const categories = useStore((state) => state.categories);
   const stockPlaces = useStore((state) => state.stockPlaces);
@@ -31,14 +38,18 @@ const ProductForm: FC<Props> = ({ defaultValues, id = "", pageType }) => {
     defaultValues,
   });
   const onSubmit: SubmitHandler<EditedProduct> = async (data) => {
+    setIsLoading(true);
     switch (pageType) {
       case "NEW":
         await addProduct(data);
-        return;
+        break;
       case "EDIT":
         await updateProduct(data, id);
-        return;
+        setIsOpen(false);
+        break;
     }
+    setIsLoading(false);
+    return;
   };
 
   const addProduct = async (data: EditedProduct) => {

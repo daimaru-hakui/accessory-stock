@@ -7,6 +7,7 @@ import Navbar from "@/components/navbar";
 import { useStore } from "@/store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import DrawerSidebar from "@/components/drawer-sidebar";
+import LoadingSpinner from "@/components/ui/loading-spinner";
 
 const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
   const supabase = createClientComponentClient();
@@ -60,6 +61,8 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
 
   console.log("dashboard");
   return (
+    <>
+    <LoadingSpinner/>
     <div
       style={{ transition: "0.2s" }}
       className={`${isSidebar ? "dashboardLayout" : "dashboardLayoutNotSidebar"}`}
@@ -73,6 +76,7 @@ const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
         </div>
       </main>
     </div>
+    </>
   );
 };
 

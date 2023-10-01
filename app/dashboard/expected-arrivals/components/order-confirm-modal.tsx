@@ -47,6 +47,7 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
   const [prevStock, setPrevStock] = useState(0);
   const supabase = createClientComponentClient<Database>();
   const session = useStore((state) => state.session);
+  const setIsLoading = useStore((state) => state.setIsLoading);
   const router = useRouter();
 
   useEffect(() => {
@@ -84,10 +85,12 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setIsLoading(true);
     await addIncommingHistory(data);
     await updateOrderHistory(data);
     await updateSku(data);
     setIsOpen(false);
+    setIsLoading(false);
     router.refresh();
   };
 
@@ -314,4 +317,4 @@ const OrderConfirmModal: FC<Props> = ({ order }) => {
   );
 };
 
-export default React.memo(OrderConfirmModal)
+export default React.memo(OrderConfirmModal);
