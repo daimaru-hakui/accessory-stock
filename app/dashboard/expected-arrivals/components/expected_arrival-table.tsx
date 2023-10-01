@@ -69,7 +69,7 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
         <table className="w-full min-w-[calc(1100px)]">
           <thead className="text-left text-xs sticky top-0 bg-zinc-50">
             <tr className="border-b h-12">
-              <th className={`${ThStyle} text-center`}>
+              <th className={`${ThStyle}`}>
                 <input type="checkbox"
                   checked={checkedOrders.length > 0 ? true : false}
                   onChange={handleAllCheckedList} />
@@ -87,7 +87,7 @@ const ExpectedArrivalTable: FC<Props> = ({ orders }) => {
               <th className={`${ThStyle} text-center`}>価格</th>
               <th className={`${ThStyle} text-center`}>数量</th>
               <th className={`${ThStyle} text-center`}>合計</th>
-              <th className={`${ThStyle} text-center`}>コメント</th>
+              <th className={`${ThStyle}`}>コメント</th>
             </tr>
           </thead>
           <tbody className="text-sm">

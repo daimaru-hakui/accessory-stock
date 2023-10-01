@@ -104,7 +104,7 @@ const OrderConfirmTableModal: FC = () => {
     })
   };
 
-  const ThStyle = "p-1 px-3 w-auto";
+  const ThStyle = "p-1 px-3";
 
   return (
     <>
