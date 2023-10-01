@@ -83,6 +83,7 @@ const OrderModal: FC<Props> = ({ product }) => {
         create_user: session?.user.id || "",
         price: Number(data.price),
         quantity: Number(data.quantity),
+        order_quantity: Number(data.quantity),
         order_date: data.orderDate,
         availability_date: data.availabilityDate,
         comment: data.comment,
