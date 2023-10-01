@@ -83,6 +83,13 @@ const OrderHistoryTableRow: FC<Props> = ({
           <div key={detail.id}>{detail.order_quantity}</div>
         ))}
       </td>
+      <td className={`${TdStyle} text-right`}>
+        {order.order_details.map((detail) => (
+          <div key={detail.id}>
+            {(detail.price * detail.order_quantity).toLocaleString('ja-JP')}円
+          </div>
+        ))}
+      </td>
       <td className={`${TdStyle}`}>
         {order.order_details.map((detail) => (
           <div key={detail.id}>{detail.comment}</div>

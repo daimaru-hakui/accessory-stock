@@ -1,5 +1,5 @@
 import { Database } from "@/schema";
-import React, { FC } from "react";
+import React, { FC, } from "react";
 import IncomingTableRow from "./incoming-table-row";
 
 type IncomingDetail = Database["public"]["Tables"]["incoming_details"]["Row"];
@@ -46,11 +46,12 @@ const IncomingTable: FC<Props> = ({ incomingDetails }) => {
             <th className={`${ThStyle}`}>仕入先</th>
             <th className={`${ThStyle} text-center`}>価格</th>
             <th className={`${ThStyle} text-center`}>数量</th>
+            <th className={`${ThStyle} text-center`}>合計</th>
             <th className={`${ThStyle} text-center`}>コメント</th>
           </tr>
         </thead>
         <tbody className="text-sm">
-          {incomingDetails.reverse()?.map((incomingDetail) => (
+          {incomingDetails?.map((incomingDetail) => (
             <IncomingTableRow
               key={incomingDetail.id}
               incomingDetail={incomingDetail}

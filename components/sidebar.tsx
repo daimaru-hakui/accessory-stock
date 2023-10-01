@@ -11,7 +11,7 @@ const Sidebar = () => {
   const pathname = usePathname();
   return (
     <aside
-      className="min-h-screen bg-zinc-100 hidden md:block"
+      className="grid min-h-screen w-[calc(250px)] bg-zinc-100 hidden md:block"
       style={{
         transform: isSidebar ? "translateX(0)" : "translateX(-250px)",
         transition: "0.2s",

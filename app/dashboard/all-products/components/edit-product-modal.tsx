@@ -23,7 +23,11 @@ const EditProductModal: FC<Props> = ({ product }) => {
     <>
       <BiSolidEditAlt className="cursor-pointer" onClick={() => setIsOpen(true)} />
       <Modal title="編集" isOpen={isOpen} setIsOpen={setIsOpen}>
-        <ProductForm pageType="EDIT" defaultValues={product} id={product.id} />
+        <ProductForm
+          pageType="EDIT"
+          defaultValues={product}
+          id={product.id}
+          setIsOpen={setIsOpen} />
       </Modal>
     </>
   );
