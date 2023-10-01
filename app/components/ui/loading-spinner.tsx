@@ -1,6 +1,6 @@
 import React from 'react';
 import Spinner from './spinner';
-import { useStore } from '@/store';
+import { useStore } from '@/app/store';
 
 const LoadingSpinner = () => {
   const isLoading = useStore((state) => state.isLoading);

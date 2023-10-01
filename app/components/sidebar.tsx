@@ -1,7 +1,7 @@
 "use client";
 import Logo from "@/app/logo";
-import { useStore } from "@/store";
-import { sidebarLinks } from "@/utils/links";
+import { useStore } from "@/app/store";
+import { sidebarLinks } from "@/app/utils/links";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";

@@ -3,8 +3,9 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Button from "../../../components/ui/Button";
-import Input from "../../../components/ui/input";
+import Button from "@/app/components/ui/Button";
+import Input from "@/app/components/ui/input";
+import { useStore } from "@/app/store";
 
 type Inputs = {
   email: string;
@@ -13,6 +14,7 @@ type Inputs = {
 
 const LoginForm = () => {
   const router = useRouter();
+  const setIsLoading = useStore((state)=>state.setIsLoading)
   const supabase = createClientComponentClient();
   const {
     register,
@@ -21,10 +23,11 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    handleSignIn(data);
+    await handleSignIn(data);
   };
 
   const handleSignIn = async (data: Inputs) => {
+    setIsLoading(true)
     const { data: user, error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
@@ -36,6 +39,7 @@ const LoginForm = () => {
     if (user) {
       router.push("/dashboard");
     }
+    setIsLoading(false)
   };
 
   return (

@@ -1,14 +1,14 @@
 "use client";
-import Button from "@/components/ui/Button";
-import Modal from "@/components/ui/modal";
-import Select from "@/components/ui/select";
+import Button from "@/app/components/ui/Button";
+import Modal from "@/app/components/ui/modal";
+import Select from "@/app/components/ui/select";
 import { Database } from "@/schema";
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 import React, { useState, FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-import Input from "@/components/ui/input";
+import Input from "@/app/components/ui/input";
 import OrderTableRow from "./order-table-row";
 import { format } from "date-fns";
 

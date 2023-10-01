@@ -2,7 +2,7 @@
 import React from "react";
 import { BiMenuAltLeft } from "react-icons/bi";
 import DropDown from "./ui/DropDown";
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 
 const Navbar = () => {
   const isSidebar = useStore((state) => state.isSidebar);

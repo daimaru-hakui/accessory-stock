@@ -2,7 +2,7 @@
 import { Database } from "@/schema";
 import React, { FC, useEffect, useCallback } from "react";
 import OrderHistoryTableRow from "./expected_arrival-table-row";
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 import ExpectedArrivalControl from "./expected-arrival-control";
 
 type OrderDetail = Database["public"]["Tables"]["order_details"]["Row"];

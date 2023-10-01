@@ -2,12 +2,12 @@
 import React, { Dispatch, FC, SetStateAction } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import Input from "@/components/ui/input";
-import Select from "@/components/ui/select";
+import Input from "@/app/components/ui/input";
+import Select from "@/app/components/ui/select";
 import { useRouter } from "next/navigation";
-import { EditedProduct } from "@/types";
-import { useStore } from "@/store";
-import Button from "@/components/ui/Button";
+import { EditedProduct } from "@/app/types";
+import { useStore } from "@/app/store";
+import Button from "@/app/components/ui/Button";
 
 type Props = {
   defaultValues: EditedProduct;

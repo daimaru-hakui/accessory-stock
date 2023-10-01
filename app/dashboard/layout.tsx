@@ -1,13 +1,13 @@
 "use client";
-import Sidebar from "@/components/sidebar";
 
 import React, { useCallback, useEffect } from "react";
 import "../../app/globals.css";
-import Navbar from "@/components/navbar";
-import { useStore } from "@/store";
+import Navbar from "@/app/components/navbar";
+import { useStore } from "@/app/store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import DrawerSidebar from "@/components/drawer-sidebar";
-import LoadingSpinner from "@/components/ui/loading-spinner";
+import DrawerSidebar from "@/app/components/drawer-sidebar";
+import LoadingSpinner from "@/app/components/ui/loading-spinner";
+import Sidebar from "../components/sidebar";
 
 const Dashboardlayout = ({ children }: { children: React.ReactNode; }) => {
   const supabase = createClientComponentClient();

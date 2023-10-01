@@ -1,6 +1,6 @@
-import Input from "@/components/ui/input";
+import Input from "@/app/components/ui/input";
 import { Database } from "@/schema";
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 import React, { FC } from "react";
 import { Control, UseFormRegister, useFieldArray } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";

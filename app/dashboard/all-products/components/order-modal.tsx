@@ -1,10 +1,10 @@
 "use client";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/input";
-import Modal from "@/components/ui/modal";
-import Select from "@/components/ui/select";
+import Button from "@/app/components/ui/Button";
+import Input from "@/app/components/ui/input";
+import Modal from "@/app/components/ui/modal";
+import Select from "@/app/components/ui/select";
 import { Database } from "@/schema";
-import { useStore } from "@/store";
+import { useStore } from "@/app/store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import React, { useState, FC } from "react";

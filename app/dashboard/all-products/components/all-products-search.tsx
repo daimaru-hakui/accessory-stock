@@ -1,5 +1,5 @@
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/input";
+import Button from "@/app/components/ui/Button";
+import Input from "@/app/components/ui/input";
 import React from "react";
 
 const AllProductsSearch = () => {

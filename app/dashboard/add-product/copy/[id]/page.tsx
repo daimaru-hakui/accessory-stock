@@ -3,7 +3,7 @@ import { Database } from "@/schema";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import ProductForm from "../../components/product-form";
-import { EditedProduct } from "@/types";
+import { EditedProduct } from "@/app/types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useParams } from "next/navigation";
 
