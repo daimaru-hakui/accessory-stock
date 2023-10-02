@@ -33,8 +33,8 @@ const OrderHistoryTableRow: FC<Props> = ({
   return (
     <tr key={order.id} className="border-b h-12">
       <td className={`${TdStyle}`}>{order.id}</td>
-      <td className={`${TdStyle}`}>{order.order_details[0].order_date}</td>
-      <td className={`${TdStyle}`}>{order.order_details[0].availability_date}</td>
+      <td className={`${TdStyle}`}>{order.order_details[0]?.order_date}</td>
+      <td className={`${TdStyle}`}>{order.order_details[0]?.availability_date}</td>
       <td className={`${TdStyle}`}>
         {order.order_details.map((detail) => (
           <div key={detail.id}>

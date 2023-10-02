@@ -32,7 +32,7 @@ const IncomingTable: FC<Props> = ({ incomingDetails }) => {
 
   return (
     <div className="overflow-auto  max-h-[calc(100vh-110px)]">
-      <table className="w-full min-w-[calc(1100px)] ">
+      <table className="w-full min-w-[calc(1300px)] ">
         <thead className="text-left text-xs sticky top-0 bg-zinc-50">
           <tr className="border-b h-12">
             <th className={`${ThStyle}`}>発注NO.</th>
